@@ -7,8 +7,10 @@ import { UniversalParamsForm } from '@/components/universal-params'
 import { ModeParamsForm } from '@/components/mode-params'
 import { GcodeOutput } from '@/components/gcode-output'
 import { ModeDescription } from '@/components/mode-description'
+import { ToolpathPreview } from '@/components/toolpath-preview'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const DEFAULT_UNIVERSAL: UniversalParams = {
   zero: false,
@@ -91,7 +93,18 @@ export default function Home() {
         </Button>
 
         {/* 5. Output */}
-        <GcodeOutput gcode={gcode} filename={filename} />
+        <Tabs defaultValue="preview">
+          <TabsList>
+            <TabsTrigger value="preview">Preview</TabsTrigger>
+            <TabsTrigger value="gcode">G-Code</TabsTrigger>
+          </TabsList>
+          <TabsContent value="preview" className="mt-3">
+            <ToolpathPreview gcode={gcode} />
+          </TabsContent>
+          <TabsContent value="gcode" className="mt-3">
+            <GcodeOutput gcode={gcode} filename={filename} />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   )
