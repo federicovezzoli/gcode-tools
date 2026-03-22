@@ -8,6 +8,7 @@ import { ModeParamsForm } from '@/components/mode-params'
 import { GcodeOutput } from '@/components/gcode-output'
 import { ModeDescription } from '@/components/mode-description'
 import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 const DEFAULT_UNIVERSAL: UniversalParams = {
   zero: false,
@@ -60,11 +61,14 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
-        <div className="container mx-auto px-4 py-4 max-w-5xl">
-          <h1 className="text-xl font-bold tracking-tight">G-Code Test Pattern Generator</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Generate diagnostic G-code patterns for CNC machine calibration
-          </p>
+        <div className="container mx-auto px-4 py-4 max-w-5xl flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold tracking-tight">G-Code Test Pattern Generator</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              Generate diagnostic G-code patterns for CNC machine calibration
+            </p>
+          </div>
+          <ThemeToggle />
         </div>
       </header>
 
