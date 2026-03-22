@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/federicovezzoli/gcode-tpgen/compare/v1.2.0...v1.3.0) (2026-03-22)
+
+
+### Features
+
+* update deployment workflow to include semantic release and adjust permissions ([6fa5821](https://github.com/federicovezzoli/gcode-tpgen/commit/6fa58218e4c25aa41d29edcd73b7a290373e6bf3))
+
 # [1.2.0](https://github.com/federicovezzoli/gcode-tpgen/compare/v1.1.0...v1.2.0) (2026-03-22)
 
 
