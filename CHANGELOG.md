@@ -1,3 +1,11 @@
+# [1.1.0](https://github.com/federicovezzoli/gcode-tpgen/compare/v1.0.0...v1.1.0) (2026-03-22)
+
+
+### Features
+
+* add validation for bit width and stepover in ModeParamsForm; update ToolpathPreview to use SurfacingParams ([ff2d734](https://github.com/federicovezzoli/gcode-tpgen/commit/ff2d73432b6b8e40f09d592f215adb726abbd55d))
+* enhance surfacing mode with bit width parameter and update toolpath preview ([1fef8b7](https://github.com/federicovezzoli/gcode-tpgen/commit/1fef8b7f05ddd5cf93ba494a9140278ccbb6001d))
+
 # 1.0.0 (2026-03-22)
 
 
