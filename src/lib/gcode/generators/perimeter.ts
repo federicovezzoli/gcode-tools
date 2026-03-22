@@ -1,53 +1,30 @@
-import { UniversalParams, Direction } from '../types'
-import { fmt } from '../utils'
+import { UniversalParams } from '../types'
 
-export function generatePerimeter(direction: Direction, u: UniversalParams): string {
-  const { pen_d, pen_u, rapid, vertical, drawspeed, xsize, ysize } = u
-  let out = `; Perimeter test - direction: ${direction}\n`
-
-  // Define corners
-  const corners = [
-    [0, 0],
-    [xsize, 0],
-    [xsize, ysize],
-    [0, ysize],
-  ]
-
-  // Determine start corner based on direction
-  let startIdx = 0
-  if (direction === 'N') startIdx = 3
-  else if (direction === 'S') startIdx = 0
-  else if (direction === 'E') startIdx = 1
-  else if (direction === 'W') startIdx = 0
-
-  out += `G0 X${fmt(corners[startIdx][0])} Y${fmt(corners[startIdx][1])} Z${fmt(pen_u)} F${fmt(rapid)}\n`
-  out += `G1 Z${fmt(pen_d)} F${fmt(vertical)}\n`
-
-  for (let i = 1; i <= 4; i++) {
-    const idx = (startIdx + i) % 4
-    out += `G1 X${fmt(corners[idx][0])} Y${fmt(corners[idx][1])} F${fmt(drawspeed)}\n`
-  }
-
-  out += `G1 Z${fmt(pen_u)} F${fmt(vertical)}\n`
+// double_line: move to first point, pen down, draw to second then third point, pen up
+function double_line(sixcoords: number[], zup: string, zdn: string, vertical: number, rapid: number, drawspeed: number): string {
+  let out = ''
+  out += 'G0 X' + sixcoords[0] + ' Y' + sixcoords[1] + ' F' + rapid + '\n'
+  out += 'G1' + zdn + ' F' + vertical + '\n'
+  out += 'G1 X' + sixcoords[2] + ' Y' + sixcoords[3] + ' F' + drawspeed + '\n'
+  out += 'G1 X' + sixcoords[4] + ' Y' + sixcoords[5] + ' F' + drawspeed + '\n'
+  out += 'G0' + zup + ' F' + vertical + '\n'
   return out
 }
 
-export function generateSquareness(direction: Direction, u: UniversalParams): string {
-  const { pen_d, pen_u, rapid, vertical, drawspeed, drawspeed_slow, xsize, ysize } = u
-  let out = `; Squareness test - direction: ${direction}\n`
+export function generateSquareness(u: UniversalParams): string {
+  const { pen_d, pen_u, rapid, vertical, drawspeed, xsize, ysize } = u
+  const zu = ' Z' + pen_u
+  const zd = ' Z' + pen_d
+  let out = ''
 
-  // Draw diagonal lines to check squareness
-  out += `G0 X0 Y0 Z${fmt(pen_u)} F${fmt(rapid)}\n`
-  out += `G1 Z${fmt(pen_d)} F${fmt(vertical)}\n`
-  out += `G1 X${fmt(xsize)} Y${fmt(ysize)} F${fmt(drawspeed_slow)}\n`
-  out += `G1 Z${fmt(pen_u)} F${fmt(vertical)}\n`
+  out += 'G0' + zu + ' F' + vertical + '\n'
+  // Four L-shapes in corners
+  out += double_line([0, 10, 0, 0, 10, 0], zu, zd, vertical, rapid, drawspeed)
+  out += double_line([xsize - 10, 0, xsize, 0, xsize, 10], zu, zd, vertical, rapid, drawspeed)
+  out += double_line([xsize, ysize - 10, xsize, ysize, xsize - 10, ysize], zu, zd, vertical, rapid, drawspeed)
+  out += double_line([10, ysize, 0, ysize, 0, ysize - 10], zu, zd, vertical, rapid, drawspeed)
+  // after last 'L' shape pen is up
+  out += 'G0 X0 Y0 F' + rapid + '\n'
 
-  out += `G0 X${fmt(xsize)} Y0 Z${fmt(pen_u)} F${fmt(rapid)}\n`
-  out += `G1 Z${fmt(pen_d)} F${fmt(vertical)}\n`
-  out += `G1 X0 Y${fmt(ysize)} F${fmt(drawspeed_slow)}\n`
-  out += `G1 Z${fmt(pen_u)} F${fmt(vertical)}\n`
-
-  // Draw perimeter
-  out += generatePerimeter(direction, u)
   return out
 }

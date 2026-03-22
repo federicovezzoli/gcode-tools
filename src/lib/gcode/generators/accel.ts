@@ -1,38 +1,126 @@
 import { UniversalParams } from '../types'
-import { fmt } from '../utils'
+
+// accel_pre: draw a 10mm reference segment before the acceleration test
+function accel_pre(mode: string, i: number, zup: string, zdn: string, rapid: number, vertical: number, drawspeed: number): string {
+  const xstart = (mode === 'accel_x') ? 2 * i : 0
+  const xend   = (mode === 'accel_x') ? 2 * i : 10
+  const ystart = (mode === 'accel_x') ? 0     : 2 * i
+  const yend   = (mode === 'accel_x') ? 10    : 2 * i
+
+  const xpre = xstart + 5
+  const ypre = ystart + 5
+
+  let out = ''
+  // raise pen
+  out += 'G0' + zup + ' F' + vertical + '\n'
+  // move to xpre, ypre
+  out += 'G0 X' + xpre.toFixed(3) + ' Y' + ypre.toFixed(3) + ' F' + rapid + '\n'
+  // move to xstart, ystart
+  out += 'G0 X' + xstart.toFixed(3) + ' Y' + ystart.toFixed(3) + ' F' + rapid + '\n'
+  // lower pen
+  out += 'G1' + zdn + ' F' + vertical + '\n'
+  // move to xend, yend
+  out += 'G1 X' + xend.toFixed(3) + ' Y' + yend.toFixed(3) + ' F' + drawspeed + '\n'
+  // raise pen
+  out += 'G0' + zup + ' F' + vertical + '\n'
+  return out
+}
+
+// accel_execute: ramp velocity up then back down across the extent, subdivided into 40 segments
+function accel_execute(mode: string, i: number, extent: number, rapid: number): string {
+  const subdiv = 40  // subdivide extent into this many smaller segments
+  const xstart = (mode === 'accel_x') ? 2 * i : 10
+  const ystart = (mode === 'accel_x') ? 10    : 2 * i
+  const xstep  = (mode === 'accel_x') ? extent / subdiv : 0
+  const ystep  = (mode === 'accel_x') ? 0               : extent / subdiv
+
+  let out = ''
+  for (let j = 1; j <= subdiv; j++) {
+    const x = xstart + j * xstep
+    const y = ystart + j * ystep
+    const vel = rapid * Math.sqrt(j / subdiv)
+    out += 'G1 X' + x.toFixed(3) + ' Y' + y.toFixed(3) + ' F' + Math.round(vel) + '\n'
+  }
+  for (let j = subdiv - 1; j >= 0; j--) {
+    const x = xstart + j * xstep
+    const y = ystart + j * ystep
+    const vel = rapid * Math.sqrt((j + 1) / subdiv)
+    out += 'G1 X' + x.toFixed(3) + ' Y' + y.toFixed(3) + ' F' + Math.round(vel) + '\n'
+  }
+  return out
+}
+
+// accel_post: draw a second 10mm reference segment after the acceleration test
+function accel_post(mode: string, i: number, zup: string, zdn: string, rapid: number, vertical: number, drawspeed: number): string {
+  const xstart = (mode === 'accel_x') ? 2 * i : 11
+  const xend   = (mode === 'accel_x') ? 2 * i : 21
+  const ystart = (mode === 'accel_x') ? 11    : 2 * i
+  const yend   = (mode === 'accel_x') ? 21    : 2 * i
+
+  const xpre = xstart + 5
+  const ypre = ystart + 5
+
+  let out = ''
+  // raise pen
+  out += 'G0' + zup + ' F' + vertical + '\n'
+  // move to xpre, ypre
+  out += 'G0 X' + xpre.toFixed(3) + ' Y' + ypre.toFixed(3) + ' F' + rapid + '\n'
+  // move to xstart, ystart
+  out += 'G0 X' + xstart.toFixed(3) + ' Y' + ystart.toFixed(3) + ' F' + rapid + '\n'
+  // lower pen
+  out += 'G1' + zdn + ' F' + vertical + '\n'
+  // move to xend, yend
+  out += 'G1 X' + xend.toFixed(3) + ' Y' + yend.toFixed(3) + ' F' + drawspeed + '\n'
+  // raise pen
+  out += 'G0' + zup + ' F' + vertical + '\n'
+  return out
+}
 
 export function generateAccel(
   axis: 'x' | 'y',
-  accelLow: number, accelHigh: number, accelTests: number,
+  accel_low: number, accel_high: number, accel_tests: number,
   u: UniversalParams
 ): string {
   const { pen_d, pen_u, rapid, vertical, drawspeed, xsize, ysize } = u
-  let out = `; Acceleration test - axis: ${axis.toUpperCase()}, low: ${accelLow} high: ${accelHigh} tests: ${accelTests}\n`
-  out += `M400 ; wait for moves to finish\n`
+  const zu = ' Z' + pen_u
+  const zd = ' Z' + pen_d
+  const mode = 'accel_' + axis  // 'accel_x' or 'accel_y'
 
-  const lineLen = axis === 'x' ? xsize : ysize
-  const spacing = (axis === 'x' ? ysize : xsize) / (accelTests + 1)
+  let out = ''
+  out += 'M501\n'
 
-  for (let i = 0; i < accelTests; i++) {
-    const accel = accelLow + (accelHigh - accelLow) * (i / (accelTests - 1 || 1))
-    const velocity = rapid * Math.sqrt((i + 1) / accelTests)
+  const base_accel = 180
+  const extent = (axis === 'x') ? xsize : ysize
+  const accel_incr = (accel_tests === 1) ? 0 : (accel_high - accel_low) / (accel_tests - 1)
 
-    out += `\n; Test ${i + 1}: accel=${fmt(accel)} mm/s2, velocity=${fmt(velocity)} mm/min\n`
-    out += `M201 ${axis.toUpperCase()}${fmt(accel)}\n`
-    out += `M204 T${fmt(accel)} S${fmt(accel)}\n`
+  for (let i = 0; i < accel_tests; i++) {
+    out += accel_pre(mode, i, zu, zd, rapid, vertical, drawspeed)
 
-    const perpPos = spacing * (i + 1)
-    const startX = axis === 'x' ? 0 : perpPos
-    const startY = axis === 'y' ? 0 : perpPos
-    const endX = axis === 'x' ? lineLen : perpPos
-    const endY = axis === 'y' ? lineLen : perpPos
+    // Calculate acceleration value for this test and set it
+    const accel_value = Math.round(accel_low + i * accel_incr)
+    out += 'M400\n'
+    if (axis === 'x') {
+      out += 'M201 X' + accel_value + '\n'
+    } else {
+      out += 'M201 Y' + accel_value + '\n'
+    }
+    out += 'M204 T' + accel_value + '\n'
+    out += 'M400\n'
 
-    out += `G0 X${fmt(startX)} Y${fmt(startY)} Z${fmt(pen_u)} F${fmt(rapid)}\n`
-    out += `G1 Z${fmt(pen_d)} F${fmt(vertical)}\n`
-    out += `G1 X${fmt(endX)} Y${fmt(endY)} F${fmt(velocity)}\n`
-    out += `G1 Z${fmt(pen_u)} F${fmt(vertical)}\n`
+    out += accel_execute(mode, i, extent, rapid)
+
+    // Set acceleration back to base value of 180
+    out += 'M400\n'
+    out += 'M201 X' + base_accel + ' Y' + base_accel + '\n'
+    out += 'M204 T' + base_accel + '\n'
+    out += 'M400\n'
+
+    out += accel_post(mode, i, zu, zd, rapid, vertical, drawspeed)
   }
 
-  out += `\n; Restore acceleration\nM501 ; load EEPROM\n`
+  out += 'G0' + zu + ' F' + vertical + '\n'
+  out += 'G0 X0 Y0 F' + rapid + '\n'
+  out += 'M501\n'
+
   return out
 }

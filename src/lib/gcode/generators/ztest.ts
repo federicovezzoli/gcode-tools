@@ -1,60 +1,70 @@
 import { UniversalParams } from '../types'
-import { fmt } from '../utils'
 
-function zTestMark(x: number, y: number, size: number, u: UniversalParams): string {
-  const { pen_d, pen_u, rapid, vertical, drawspeed } = u
+// z_test: draws an X shape at (x, y) with given size.
+// Pen descends to zdn at center of each diagonal, rises back to zup at corners.
+function z_test(x: number, y: number, size: number, zup: string, zdn: string, rapid: number, drawspeed: number): string {
+  const x0 = (x - size / 2).toFixed(3)
+  const x1 = (x + size / 2).toFixed(3)
+  const y0 = (y - size / 2).toFixed(3)
+  const y1 = (y + size / 2).toFixed(3)
+  const xc = x.toFixed(3)
+  const yc = y.toFixed(3)
+
   let out = ''
-  const half = size / 2
-
-  // Draw X shape: two diagonals with gradual Z descent then ascent
-  // Diagonal 1: top-left to bottom-right
-  out += `G0 X${fmt(x - half)} Y${fmt(y + half)} Z${fmt(pen_u)} F${fmt(rapid)}\n`
-  out += `G1 Z${fmt((pen_d + pen_u) / 2)} F${fmt(vertical)}\n`
-  out += `G1 X${fmt(x)} Y${fmt(y)} Z${fmt(pen_d)} F${fmt(drawspeed)}\n`
-  out += `G1 X${fmt(x + half)} Y${fmt(y - half)} Z${fmt((pen_d + pen_u) / 2)} F${fmt(drawspeed)}\n`
-  out += `G1 Z${fmt(pen_u)} F${fmt(vertical)}\n`
-
-  // Diagonal 2: top-right to bottom-left
-  out += `G0 X${fmt(x + half)} Y${fmt(y + half)} Z${fmt(pen_u)} F${fmt(rapid)}\n`
-  out += `G1 Z${fmt((pen_d + pen_u) / 2)} F${fmt(vertical)}\n`
-  out += `G1 X${fmt(x)} Y${fmt(y)} Z${fmt(pen_d)} F${fmt(drawspeed)}\n`
-  out += `G1 X${fmt(x - half)} Y${fmt(y - half)} Z${fmt((pen_d + pen_u) / 2)} F${fmt(drawspeed)}\n`
-  out += `G1 Z${fmt(pen_u)} F${fmt(vertical)}\n`
-
+  out += 'G0 X' + x0 + ' Y' + y0 + zup + ' F' + rapid + '\n'
+  out += 'G1 X' + xc + ' Y' + yc + zdn + ' F' + drawspeed + '\n'
+  out += 'G1 X' + x1 + ' Y' + y1 + zup + ' F' + drawspeed + '\n'
+  out += 'G0 X' + x0 + ' Y' + y1 + zup + ' F' + rapid + '\n'
+  out += 'G1 X' + xc + ' Y' + yc + zdn + ' F' + drawspeed + '\n'
+  out += 'G1 X' + x1 + ' Y' + y0 + zup + ' F' + drawspeed + '\n'
   return out
 }
 
 export function generateZTestCorners(zxsize: number, u: UniversalParams): string {
-  const { xsize, ysize } = u
-  let out = `; Z-test corners - mark size: ${zxsize}mm\n`
+  const { pen_d, pen_u, rapid, drawspeed, xsize, ysize, vertical } = u
+  const zu = ' Z' + pen_u
+  const zd = ' Z' + pen_d
+  let out = ''
 
-  const corners = [
-    [0, 0],
-    [xsize, 0],
-    [xsize, ysize],
-    [0, ysize],
-    [xsize / 2, ysize / 2],
-  ]
+  out += 'G0' + zu + ' F' + vertical + '\n'
+  out += z_test(zxsize / 2, zxsize / 2, zxsize, zu, zd, rapid, drawspeed)
+  out += z_test(xsize - zxsize / 2, zxsize / 2, zxsize, zu, zd, rapid, drawspeed)
+  out += z_test(xsize - zxsize / 2, ysize - zxsize / 2, zxsize, zu, zd, rapid, drawspeed)
+  out += z_test(zxsize / 2, ysize - zxsize / 2, zxsize, zu, zd, rapid, drawspeed)
 
-  for (const [x, y] of corners) {
-    out += zTestMark(x, y, zxsize, u)
-  }
   return out
 }
 
 export function generateZTestGrid(zxsize: number, u: UniversalParams): string {
-  const { xsize, ysize } = u
-  let out = `; Z-test grid - mark size: ${zxsize}mm\n`
+  const { pen_d, pen_u, rapid, drawspeed, xsize, ysize, vertical } = u
+  const zu = ' Z' + pen_u
+  const zd = ' Z' + pen_d
+  let out = ''
 
-  const cols = Math.floor(xsize / (zxsize * 2)) + 1
-  const rows = Math.floor(ysize / (zxsize * 2)) + 1
+  out += 'G0' + zu + ' F' + vertical + '\n'
 
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const x = (xsize / (cols - 1 || 1)) * c
-      const y = (ysize / (rows - 1 || 1)) * r
-      out += zTestMark(x, y, zxsize, u)
+  // minimum 1 mm space between X marks: N*zxsize+(N-1)*space <= xsize (or ysize)
+  const space = 1
+  const num_x = Math.floor((xsize + space) / (zxsize + space))
+  const num_y = Math.floor((ysize + space) / (zxsize + space))
+
+  if (num_x < 2 || num_y < 2) {
+    out += '; not enough room for grid\n'
+  } else {
+    const step_x = (xsize - zxsize) / (num_x - 1)
+    const step_y = (ysize - zxsize) / (num_y - 1)
+    for (let iy = 0; iy < num_y; iy++) {
+      if (iy % 2 === 0) {
+        for (let ix = 0; ix < num_x; ix++) {
+          out += z_test(zxsize / 2 + ix * step_x, zxsize / 2 + iy * step_y, zxsize, zu, zd, rapid, drawspeed)
+        }
+      } else {
+        for (let ix = num_x - 1; ix >= 0; ix--) {
+          out += z_test(zxsize / 2 + ix * step_x, zxsize / 2 + iy * step_y, zxsize, zu, zd, rapid, drawspeed)
+        }
+      }
     }
   }
+
   return out
 }
