@@ -36,7 +36,7 @@ const DEFAULT_MODE_PARAMS: Record<string, Record<string, any>> = {
   accel_x: { accel_low: 100, accel_high: 1000, accel_tests: 10 },
   accel_y: { accel_low: 100, accel_high: 1000, accel_tests: 10 },
   text: { text_input: '' },
-  surfacing: { stepover: 12, direction: 'E', perimeter: false },
+  surfacing: { stepover: 12, direction: 'E', perimeter: false, bit_width: 25 },
   hog: { orientation: 'X', hog_count: 1, hog_offset: 10, final_feedrate: 1000, final_stepover: 3 },
 }
 
@@ -99,7 +99,7 @@ export default function Home() {
             <TabsTrigger value="gcode">G-Code</TabsTrigger>
           </TabsList>
           <TabsContent value="preview" className="mt-3">
-            <ToolpathPreview gcode={gcode} />
+            <ToolpathPreview gcode={gcode} mode={mode} modeParams={modeParams} />
           </TabsContent>
           <TabsContent value="gcode" className="mt-3">
             <GcodeOutput gcode={gcode} filename={filename} />

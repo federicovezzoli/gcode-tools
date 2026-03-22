@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react'
 import { parseGcode } from '@/lib/gcode/parser'
+import type { Mode, SurfacingParams } from '@/lib/gcode'
 
 const PAD = 24 // SVG padding in px
 const W = 600
@@ -9,9 +10,11 @@ const H = 400
 
 interface ToolpathPreviewProps {
   gcode: string
+  mode?: Mode
+  modeParams?: Partial<SurfacingParams> & Record<string, unknown>
 }
 
-export function ToolpathPreview({ gcode }: ToolpathPreviewProps) {
+export function ToolpathPreview({ gcode, mode, modeParams }: ToolpathPreviewProps) {
   const { segments, bounds } = useMemo(() => parseGcode(gcode), [gcode])
 
   if (!gcode || segments.length === 0) {
@@ -89,14 +92,25 @@ export function ToolpathPreview({ gcode }: ToolpathPreviewProps) {
         ))}
 
         {/* Cutting moves */}
-        {cuts.map((s, i) => (
-          <line key={`cut${i}`}
-            x1={tx(s.x1)} y1={ty(s.y1)} x2={tx(s.x2)} y2={ty(s.y2)}
-            className="stroke-primary"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-          />
-        ))}
+        {mode === 'surfacing' && (modeParams?.bit_width ?? 0) > 0
+          ? cuts.map((s, i) => (
+              <line key={`cut${i}`}
+                x1={tx(s.x1)} y1={ty(s.y1)} x2={tx(s.x2)} y2={ty(s.y2)}
+                stroke="hsl(10 80% 55%)"
+                strokeOpacity={0.45}
+                strokeWidth={(modeParams?.bit_width ?? 0) * scale}
+                strokeLinecap="butt"
+              />
+            ))
+          : cuts.map((s, i) => (
+              <line key={`cut${i}`}
+                x1={tx(s.x1)} y1={ty(s.y1)} x2={tx(s.x2)} y2={ty(s.y2)}
+                className="stroke-primary"
+                strokeWidth="1.2"
+                strokeLinecap="round"
+              />
+            ))
+        }
 
         {/* Origin dot */}
         <circle cx={tx(0)} cy={ty(0)} r="3" className="fill-primary/50" />

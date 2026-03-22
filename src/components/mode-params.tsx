@@ -126,7 +126,22 @@ export function ModeParamsForm({ mode, value, onChange }: ModeParamsFormProps) {
 
         {mode === 'surfacing' && (
           <>
-            <NumField label="Stepover" name="stepover" value={value.stepover ?? 12} unit="mm" onChange={set} />
+            <NumField label="Bit Width" name="bit_width" value={value.bit_width ?? 25} unit="mm" onChange={set} />
+            <div className="space-y-1">
+              <NumField label="Stepover" name="stepover" value={value.stepover ?? 12} unit="mm" onChange={set} />
+              {(() => {
+                const bw = value.bit_width ?? 25
+                const so = value.stepover ?? 12
+                if (bw <= 0 || so < 0) return (
+                  <p className="text-xs text-destructive">Bit width must be &gt; 0 and stepover cannot be negative</p>
+                )
+                if (so > bw) return (
+                  <p className="text-xs text-destructive">Stepover exceeds bit width — surface won&apos;t be fully covered</p>
+                )
+                const overlap = Math.round((1 - so / bw) * 100)
+                return <p className="text-xs text-muted-foreground">{overlap}% overlap</p>
+              })()}
+            </div>
             <DirSelect name="direction" value={value.direction ?? 'E'} onChange={set} />
             <CheckField label="Include perimeter pass" name="perimeter" value={value.perimeter ?? false} onChange={set} />
           </>

@@ -60,6 +60,7 @@ export interface SurfacingParams {
   stepover: number
   direction: Direction
   perimeter: boolean
+  bit_width: number
 }
 
 export interface HogParams {
