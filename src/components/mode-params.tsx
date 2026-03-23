@@ -130,11 +130,11 @@ export function ModeParamsForm({ mode, value, onChange, xsize = 100, ysize = 100
           <>
             <NumField label="Bit Width" name="bit_width" value={value.bit_width ?? 25} unit="mm" onChange={set} />
             <div className="space-y-1">
-              <NumField label="Stepover" name="stepover" value={value.stepover ?? 12} unit="mm" onChange={set} />
+              <NumField label="Stepover" name="stepover" value={value.stepover ?? 12} unit="mm" onChange={(k, v) => set(k, Math.max(0.1, v))} />
               {(() => {
                 const bw = value.bit_width ?? 25
                 const so = value.stepover ?? 12
-                if (bw <= 0 || so < 0) return (
+                if (bw <= 0 || so <= 0) return (
                   <p className="text-xs text-destructive">Bit width must be &gt; 0 and stepover cannot be negative</p>
                 )
                 const dir = value.direction ?? 'E'
@@ -148,6 +148,7 @@ export function ModeParamsForm({ mode, value, onChange, xsize = 100, ysize = 100
                 return <p className="text-xs text-muted-foreground">{overlap}% overlap ({rowstep.toFixed(1)} mm actual spacing)</p>
               })()}
             </div>
+            <NumField label="Passes" name="passes" value={value.passes ?? 1} step="1" onChange={(k, v) => set(k, Math.min(50, Math.max(1, Math.round(v))))} />
             <DirSelect name="direction" value={value.direction ?? 'E'} onChange={set} />
             <CheckField label="Include perimeter pass" name="perimeter" value={value.perimeter ?? false} onChange={set} />
           </>

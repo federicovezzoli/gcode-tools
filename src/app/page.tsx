@@ -36,7 +36,7 @@ const DEFAULT_MODE_PARAMS: Record<string, Record<string, any>> = {
   accel_x: { accel_low: 100, accel_high: 1000, accel_tests: 10 },
   accel_y: { accel_low: 100, accel_high: 1000, accel_tests: 10 },
   text: { text_input: '' },
-  surfacing: { stepover: 12, direction: 'E', perimeter: false, bit_width: 25 },
+  surfacing: { stepover: 12, direction: 'E', perimeter: false, bit_width: 25, passes: 1 },
   hog: { orientation: 'X', hog_count: 1, hog_offset: 10, final_feedrate: 1000, final_stepover: 3 },
 }
 

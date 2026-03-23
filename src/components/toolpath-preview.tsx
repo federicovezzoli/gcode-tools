@@ -15,7 +15,13 @@ interface ToolpathPreviewProps {
 }
 
 export function ToolpathPreview({ gcode, mode, modeParams }: ToolpathPreviewProps) {
-  const { segments, bounds } = useMemo(() => parseGcode(gcode), [gcode])
+  const passes = mode === 'surfacing' ? (modeParams?.passes ?? 1) : 1
+  const gcodeForPreview = useMemo(() => {
+    if (passes <= 1) return gcode
+    const m0 = gcode.indexOf('\nM0')
+    return m0 !== -1 ? gcode.slice(0, m0) : gcode
+  }, [gcode, passes])
+  const { segments, bounds } = useMemo(() => parseGcode(gcodeForPreview), [gcodeForPreview])
 
   if (!gcode || segments.length === 0) {
     return (
@@ -137,6 +143,9 @@ export function ToolpathPreview({ gcode, mode, modeParams }: ToolpathPreviewProp
           <span className="inline-block w-3 h-0.5 bg-muted-foreground/30 rounded mr-1 translate-y-[-1px]" />
           {rapidCount} rapids
         </span>
+        {passes > 1 && (
+          <span className="text-muted-foreground/70 italic">pass 1 of {passes} shown</span>
+        )}
         <span className="ml-auto">
           {(maxX - minX).toFixed(1)} × {(maxY - minY).toFixed(1)} mm
         </span>

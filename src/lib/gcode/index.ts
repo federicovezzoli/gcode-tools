@@ -54,6 +54,7 @@ export function generateGcode(mode: Mode, universal: UniversalParams, modeParams
     out += '; stepover: ' + p.stepover + ' mm\n'
     out += '; direction: ' + p.direction + '\n'
     out += '; perimeter: ' + p.perimeter + '\n'
+    out += '; passes: ' + (p.passes ?? 1) + '\n'
   }
 
   if (mode === 'hog') {
@@ -108,7 +109,7 @@ export function generateGcode(mode: Mode, universal: UniversalParams, modeParams
   }
 
   if (mode === 'surfacing') {
-    out += generateSurfacing(p.stepover, p.direction, p.perimeter, universal)
+    out += generateSurfacing(p.stepover, p.direction, p.perimeter, p.passes ?? 1, universal)
   }
 
   if (mode === 'hog') {

@@ -61,6 +61,7 @@ export interface SurfacingParams {
   direction: Direction
   perimeter: boolean
   bit_width: number
+  passes: number
 }
 
 export interface HogParams {

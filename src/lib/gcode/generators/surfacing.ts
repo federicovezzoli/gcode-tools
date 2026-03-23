@@ -4,7 +4,8 @@ import { UniversalParams, Direction } from '../types'
 function gen_subdivided_line(x0: number, y0: number, x1: number, y1: number, drawspeed: number): string {
   const fifth_second = drawspeed / 300  // how far do we go in 1/5th of a second
   const dist = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0))
-  const stroke_segs = Math.ceil(dist / fifth_second) + 1  // how many segments to get about 1/5 second per segment
+  const raw_segs = fifth_second > 0 ? Math.ceil(dist / fifth_second) + 1 : 1
+  const stroke_segs = Math.min(raw_segs, 5000)  // safety cap
   const dx = (x1 - x0) / stroke_segs
   const dy = (y1 - y0) / stroke_segs
   let out = ''
@@ -82,6 +83,7 @@ function surfacing(xmin: number, ymin: number, xmax: number, ymax: number, stepo
     horiz = false
   }
 
+  if (stepover <= 0) return ''
   const nrows = Math.ceil(Math.abs(rowend - rowstart) / stepover) + 1
   // stepover is a guideline but we adjust so each row is equally spaced
   const rowstep = (rowend - rowstart) / (nrows - 1)
@@ -107,25 +109,37 @@ function surfacing(xmin: number, ymin: number, xmax: number, ymax: number, stepo
 }
 
 export function generateSurfacing(
-  stepover: number, direction: Direction, perimeter: boolean,
+  stepover: number, direction: Direction, perimeter: boolean, passes: number,
   u: UniversalParams
 ): string {
   const { pen_d, pen_u, rapid, vertical, drawspeed, xsize, ysize } = u
   const zu = ' Z' + pen_u
-  const zd = ' Z' + pen_d
   const dir = direction.toUpperCase()
   let out = ''
 
-  if (perimeter) {
-    out += surfacing_perim(xsize, ysize, stepover, dir, zu, zd, rapid, vertical, drawspeed)
-    // surfacing a slightly smaller box saves four strokes that have already been completed
-    if (dir === 'E' || dir === 'W') {
-      out += surfacing(0, 2 * stepover, xsize, ysize - 2 * stepover, stepover, dir, zu, zd, rapid, vertical, drawspeed)
-    } else {
-      out += surfacing(2 * stepover, 0, xsize - 2 * stepover, ysize, stepover, dir, zu, zd, rapid, vertical, drawspeed)
+  for (let pass = 1; pass <= passes; pass++) {
+    const zd = ' Z' + (pen_d * pass).toFixed(3)
+
+    if (pass > 1) {
+      out += `; --- Pass ${pass} of ${passes} ---\n`
     }
-  } else {
-    out += surfacing(0, 0, xsize, ysize, stepover, dir, zu, zd, rapid, vertical, drawspeed)
+
+    if (perimeter) {
+      out += surfacing_perim(xsize, ysize, stepover, dir, zu, zd, rapid, vertical, drawspeed)
+      if (dir === 'E' || dir === 'W') {
+        out += surfacing(0, 2 * stepover, xsize, ysize - 2 * stepover, stepover, dir, zu, zd, rapid, vertical, drawspeed)
+      } else {
+        out += surfacing(2 * stepover, 0, xsize - 2 * stepover, ysize, stepover, dir, zu, zd, rapid, vertical, drawspeed)
+      }
+    } else {
+      out += surfacing(0, 0, xsize, ysize, stepover, dir, zu, zd, rapid, vertical, drawspeed)
+    }
+
+    if (pass < passes) {
+      out += `G0${zu} F${vertical}\n`
+      out += `G0 X0 Y0 F${rapid}\n`
+      out += `M0 ; Pass ${pass} of ${passes} complete — press cycle start to continue\n`
+    }
   }
 
   return out
