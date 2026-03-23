@@ -65,9 +65,9 @@ export default function Home() {
       <header className="border-b">
         <div className="container mx-auto px-4 py-4 max-w-5xl flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold tracking-tight">G-Code Test Pattern Generator</h1>
+            <h1 className="text-xl font-bold tracking-tight">G-Code Patterns Generator</h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              Generate diagnostic G-code patterns for CNC machine calibration
+              Generate diagnostic G-code patterns & more for CNC machines
             </p>
           </div>
           <ThemeToggle />
@@ -84,7 +84,7 @@ export default function Home() {
         {/* 3. Parameters — two columns on md+ */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <UniversalParamsForm value={universal} onChange={setUniversal} />
-          <ModeParamsForm mode={mode} value={modeParams} onChange={handleModeParamsChange} />
+          <ModeParamsForm mode={mode} value={modeParams} onChange={handleModeParamsChange} xsize={universal.xsize} ysize={universal.ysize} />
         </div>
 
         {/* 4. Generate button */}

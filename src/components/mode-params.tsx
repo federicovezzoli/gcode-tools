@@ -12,6 +12,8 @@ interface ModeParamsFormProps {
   mode: Mode
   value: Record<string, any>
   onChange: (params: Record<string, any>) => void
+  xsize?: number
+  ysize?: number
 }
 
 function NumField({ label, name, value, unit, step = 'any', onChange }: {
@@ -73,7 +75,7 @@ function DirSelect({ name, value, onChange }: {
   )
 }
 
-export function ModeParamsForm({ mode, value, onChange }: ModeParamsFormProps) {
+export function ModeParamsForm({ mode, value, onChange, xsize = 100, ysize = 100 }: ModeParamsFormProps) {
   const set = (k: string, v: any) => onChange({ ...value, [k]: v })
 
   const noParams = ['x', 'y', 'xy']
@@ -135,11 +137,15 @@ export function ModeParamsForm({ mode, value, onChange }: ModeParamsFormProps) {
                 if (bw <= 0 || so < 0) return (
                   <p className="text-xs text-destructive">Bit width must be &gt; 0 and stepover cannot be negative</p>
                 )
-                if (so > bw) return (
+                const dir = value.direction ?? 'E'
+                const extent = (dir === 'N' || dir === 'S') ? ysize : xsize
+                const nrows = Math.ceil(extent / so) + 1
+                const rowstep = nrows > 1 ? extent / (nrows - 1) : extent
+                if (rowstep > bw) return (
                   <p className="text-xs text-destructive">Stepover exceeds bit width — surface won&apos;t be fully covered</p>
                 )
-                const overlap = Math.round((1 - so / bw) * 100)
-                return <p className="text-xs text-muted-foreground">{overlap}% overlap</p>
+                const overlap = Math.round((1 - rowstep / bw) * 100)
+                return <p className="text-xs text-muted-foreground">{overlap}% overlap ({rowstep.toFixed(1)} mm actual spacing)</p>
               })()}
             </div>
             <DirSelect name="direction" value={value.direction ?? 'E'} onChange={set} />
