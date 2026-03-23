@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/federicovezzoli/gcode-tpgen/compare/v1.3.0...v1.4.0) (2026-03-22)
+
+
+### Features
+
+* add MIT license file and update package.json to include license information ([163dc81](https://github.com/federicovezzoli/gcode-tpgen/commit/163dc81a8f1f12a92648c1781921f7da3e0b172d))
+
 # [1.3.0](https://github.com/federicovezzoli/gcode-tpgen/compare/v1.2.0...v1.3.0) (2026-03-22)
 
 
