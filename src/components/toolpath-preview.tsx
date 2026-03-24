@@ -1,8 +1,32 @@
 'use client'
 
 import { useMemo } from 'react'
-import { parseGcode } from '@/lib/gcode/parser'
+import { parseGcode, type Segment } from '@/lib/gcode/parser'
 import type { Mode, SurfacingParams } from '@/lib/gcode'
+
+// Merge consecutive collinear connected segments into single strokes
+function mergeStrokes(segments: Segment[]): Segment[] {
+  if (segments.length === 0) return []
+  const out: Segment[] = []
+  let cur = { ...segments[0] }
+  for (let i = 1; i < segments.length; i++) {
+    const s = segments[i]
+    const connected = Math.abs(s.x1 - cur.x2) < 0.01 && Math.abs(s.y1 - cur.y2) < 0.01
+    // collinearity: cross product of direction vectors ≈ 0
+    const dx1 = cur.x2 - cur.x1, dy1 = cur.y2 - cur.y1
+    const dx2 = s.x2 - s.x1, dy2 = s.y2 - s.y1
+    const collinear = Math.abs(dx1 * dy2 - dy1 * dx2) < 0.01
+    if (connected && collinear) {
+      cur.x2 = s.x2
+      cur.y2 = s.y2
+    } else {
+      out.push(cur)
+      cur = { ...s }
+    }
+  }
+  out.push(cur)
+  return out
+}
 
 const PAD = 24 // SVG padding in px
 const W = 600
@@ -50,7 +74,8 @@ export function ToolpathPreview({ gcode, mode, modeParams }: ToolpathPreviewProp
 
   // Separate into layers
   const rapids = segments.filter(s => s.isRapid)
-  const cuts = segments.filter(s => !s.isRapid && s.z < 0)
+  const rawCuts = segments.filter(s => !s.isRapid && s.z < 0)
+  const cuts = mode === 'surfacing' ? mergeStrokes(rawCuts) : rawCuts
   const clearance = segments.filter(s => !s.isRapid && s.z >= 0)
 
   const cutCount = cuts.length
@@ -99,15 +124,24 @@ export function ToolpathPreview({ gcode, mode, modeParams }: ToolpathPreviewProp
 
         {/* Cutting moves */}
         {mode === 'surfacing' && (modeParams?.bit_width ?? 0) > 0
-          ? cuts.map((s, i) => (
-              <line key={`cut${i}`}
-                x1={tx(s.x1)} y1={ty(s.y1)} x2={tx(s.x2)} y2={ty(s.y2)}
-                stroke="hsl(10 80% 55%)"
-                strokeOpacity={0.45}
-                strokeWidth={(modeParams?.bit_width ?? 0) * scale}
-                strokeLinecap="butt"
-              />
-            ))
+          ? cuts.map((s, i) => {
+              const isAxisAligned = Math.abs(s.x1 - s.x2) < 0.001 || Math.abs(s.y1 - s.y2) < 0.001
+              return isAxisAligned
+                ? <line key={`cut${i}`}
+                    x1={tx(s.x1)} y1={ty(s.y1)} x2={tx(s.x2)} y2={ty(s.y2)}
+                    stroke="hsl(10 80% 55%)"
+                    strokeOpacity={0.45}
+                    strokeWidth={(modeParams?.bit_width ?? 0) * scale}
+                    strokeLinecap="round"
+                  />
+                : <line key={`cut${i}`}
+                    x1={tx(s.x1)} y1={ty(s.y1)} x2={tx(s.x2)} y2={ty(s.y2)}
+                    stroke="hsl(10 80% 55%)"
+                    strokeOpacity={0.6}
+                    strokeWidth={1.2}
+                    strokeLinecap="round"
+                  />
+            })
           : cuts.map((s, i) => (
               <line key={`cut${i}`}
                 x1={tx(s.x1)} y1={ty(s.y1)} x2={tx(s.x2)} y2={ty(s.y2)}
