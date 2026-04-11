@@ -1,13 +1,13 @@
-import { Mode, UniversalParams, ModeParams } from './types'
-import { generateRuler } from './generators/ruler'
-import { generateSquareness } from './generators/perimeter'
-import { generateZTestCorners, generateZTestGrid } from './generators/ztest'
-import { generateDenseSegments } from './generators/dense'
 import { generateAccel } from './generators/accel'
-import { generateText } from './generators/text'
-import { generateSurfacing } from './generators/surfacing'
+import { generateDenseSegments } from './generators/dense'
 import { generateHog } from './generators/hog'
-import { timestamp } from './utils'
+import { generateSquareness } from './generators/perimeter'
+import { generateRuler } from './generators/ruler'
+import { generateSurfacing } from './generators/surfacing'
+import { generateText } from './generators/text'
+import { generateZTestCorners, generateZTestGrid } from './generators/ztest'
+import type { Mode, ModeParams, UniversalParams } from './types'
+import { fmtCoord, timestamp, zeroRefToCoords } from './utils'
 
 export function generateGcode(mode: Mode, universal: UniversalParams, modeParams: ModeParams): string {
   const { pen_d, pen_u, rapid, vertical, drawspeed, drawspeed_slow, xsize, ysize, zero } = universal
@@ -66,7 +66,8 @@ export function generateGcode(mode: Mode, universal: UniversalParams, modeParams
   }
 
   if (zero) {
-    out += 'G92 X0 Y0 Z0\n'
+    const [rx, ry] = zeroRefToCoords(universal.zero_ref ?? 'bottom-left', xsize, ysize)
+    out += `G92 X${fmtCoord(rx)} Y${fmtCoord(ry)} Z0\n`
   }
 
   // Mode dispatch — matches exactly the original generate() function
@@ -117,7 +118,15 @@ export function generateGcode(mode: Mode, universal: UniversalParams, modeParams
   }
 
   if (mode === 'hog') {
-    out += generateHog(p.orientation, p.hog_count, p.hog_offset, p.final_feedrate, p.final_stepover, p.stepover ?? 1, universal)
+    out += generateHog(
+      p.orientation,
+      p.hog_count,
+      p.hog_offset,
+      p.final_feedrate,
+      p.final_stepover,
+      p.stepover ?? 1,
+      universal,
+    )
   }
 
   return out

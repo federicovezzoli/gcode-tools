@@ -14,7 +14,9 @@ export interface ParsedToolpath {
 
 export function parseGcode(gcode: string): ParsedToolpath {
   const segments: Segment[] = []
-  let x = 0, y = 0, z = 0
+  let x = 0,
+    y = 0,
+    z = 0
 
   for (const raw of gcode.split('\n')) {
     const line = raw.split(';')[0].trim().toUpperCase()
@@ -38,15 +40,17 @@ export function parseGcode(gcode: string): ParsedToolpath {
       segments.push({ x1: x, y1: y, x2: nx, y2: ny, z: nz, isRapid: isG0 })
     }
 
-    x = nx; y = ny; z = nz
+    x = nx
+    y = ny
+    z = nz
   }
 
   if (segments.length === 0) {
     return { segments, bounds: { minX: 0, maxX: 100, minY: 0, maxY: 100 } }
   }
 
-  const xs = segments.flatMap(s => [s.x1, s.x2])
-  const ys = segments.flatMap(s => [s.y1, s.y2])
+  const xs = segments.flatMap((s) => [s.x1, s.x2])
+  const ys = segments.flatMap((s) => [s.y1, s.y2])
   return {
     segments,
     bounds: {

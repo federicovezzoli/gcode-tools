@@ -1,7 +1,14 @@
-import { UniversalParams } from '../types'
+import type { UniversalParams } from '../types'
 
 // double_line: move to first point, pen down, draw to second then third point, pen up
-function double_line(sixcoords: number[], zup: string, zdn: string, vertical: number, rapid: number, drawspeed: number): string {
+function double_line(
+  sixcoords: number[],
+  zup: string,
+  zdn: string,
+  vertical: number,
+  rapid: number,
+  drawspeed: number,
+): string {
   let out = ''
   out += 'G0 X' + sixcoords[0] + ' Y' + sixcoords[1] + ' F' + rapid + '\n'
   out += 'G1' + zdn + ' F' + vertical + '\n'

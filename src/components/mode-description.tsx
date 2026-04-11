@@ -1,16 +1,16 @@
-import { type Mode } from '@/lib/gcode'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import type { Mode } from '@/lib/gcode'
 
 const descriptions: Record<string, React.ReactNode> = {
   ruler: (
     <>
       <p>
-        This mode draws many short (~10 mm) segments 1 mm apart, with the end result resembling a ruler. These rulers are
-        drawn in pairs, with two rulers drawn next to each other, but drawn in opposite directions.
+        This mode draws many short (~10 mm) segments 1 mm apart, with the end result resembling a ruler. These rulers
+        are drawn in pairs, with two rulers drawn next to each other, but drawn in opposite directions.
       </p>
       <p>
-        These are potentially useful for identifying errors in steps per mm, not only for uniform spacing error, but also
-        for nonuniform errors in spacing. By drawing two rulers in opposite directions, backlash (or other similar
+        These are potentially useful for identifying errors in steps per mm, not only for uniform spacing error, but
+        also for nonuniform errors in spacing. By drawing two rulers in opposite directions, backlash (or other similar
         effects) can be detected. The &quot;perimeter ruler&quot; can also be used to determine whether the machine is
         square by comparing the diagonals.
       </p>
@@ -61,8 +61,8 @@ const descriptions: Record<string, React.ReactNode> = {
   dense_segments: (
     <>
       <p>
-        To test parsing and communication speed, this generates line segments drawn using a large number of very short G1
-        segments end-to-end in the same direction.
+        To test parsing and communication speed, this generates line segments drawn using a large number of very short
+        G1 segments end-to-end in the same direction.
       </p>
       <p>
         Multiple subdivision lengths are tested, each offset by 1 mm in the Y direction. The Y Extent determines the
@@ -117,9 +117,7 @@ const descriptions: Record<string, React.ReactNode> = {
 
   text: (
     <>
-      <p>
-        Generates toolpaths from text using a fixed-width font, potentially useful for ASCII art and labelling.
-      </p>
+      <p>Generates toolpaths from text using a fixed-width font, potentially useful for ASCII art and labelling.</p>
       <p className="text-destructive font-medium">
         This requires firmware support for G5 (Bezier splines). This is not enabled by default in MPCNC firmware, but it
         is fairly straightforward to enable.
@@ -134,8 +132,8 @@ const descriptions: Record<string, React.ReactNode> = {
   surfacing: (
     <>
       <p>
-        Generates strokes at a given depth traveling in only one direction. If the router is not quite perpendicular, one
-        side will cut slightly deeper — this is amplified for large-diameter bits.
+        Generates strokes at a given depth traveling in only one direction. If the router is not quite perpendicular,
+        one side will cut slightly deeper — this is amplified for large-diameter bits.
       </p>
       <p>
         The cutting strategy lifts the bit between cuts to ensure only radial (not axial) cutting. The cutting direction
@@ -172,8 +170,8 @@ const descriptions: Record<string, React.ReactNode> = {
       </p>
       <p>
         The test first prepares a &quot;top-hat&quot; shape at low speed (slotting cut + finishing pass), then cuts
-        through it at progressively higher speeds. Deflection due to cutting load can be measured directly. Higher speeds
-        produce higher loads and higher deflection.
+        through it at progressively higher speeds. Deflection due to cutting load can be measured directly. Higher
+        speeds produce higher loads and higher deflection.
       </p>
       <p className="font-medium">Recommended starting values for wood with 1/8&quot; bit:</p>
       <ul className="list-disc pl-5 space-y-0.5 font-mono text-xs">

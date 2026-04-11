@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest'
-import { readFileSync } from 'fs'
-import { join } from 'path'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
+import { describe, expect, it } from 'vitest'
 import { generateGcode } from '../index'
 import type { UniversalParams } from '../types'
 
@@ -55,36 +55,100 @@ describe('dense segments', () => {
 
 describe('acceleration', () => {
   it('accel_x', () => {
-    expect(generateGcode('accel_x', BASE, { accel_low: 100, accel_high: 1000, accel_tests: 10 })).toBe(fixture('accel_x'))
+    expect(generateGcode('accel_x', BASE, { accel_low: 100, accel_high: 1000, accel_tests: 10 })).toBe(
+      fixture('accel_x'),
+    )
   })
   it('accel_y', () => {
-    expect(generateGcode('accel_y', BASE, { accel_low: 100, accel_high: 1000, accel_tests: 10 })).toBe(fixture('accel_y'))
+    expect(generateGcode('accel_y', BASE, { accel_low: 100, accel_high: 1000, accel_tests: 10 })).toBe(
+      fixture('accel_y'),
+    )
   })
   it('accel_x single test', () => {
-    expect(generateGcode('accel_x', BASE, { accel_low: 500, accel_high: 500, accel_tests: 1 })).toBe(fixture('accel_x_single'))
+    expect(generateGcode('accel_x', BASE, { accel_low: 500, accel_high: 500, accel_tests: 1 })).toBe(
+      fixture('accel_x_single'),
+    )
   })
 })
 
 describe('surfacing', () => {
-  it('E no perimeter', () => expect(generateGcode('surfacing', BASE, { stepover: 12, direction: 'E', perimeter: false })).toBe(fixture('surfacing_E')))
-  it('N no perimeter', () => expect(generateGcode('surfacing', BASE, { stepover: 12, direction: 'N', perimeter: false })).toBe(fixture('surfacing_N')))
-  it('W no perimeter', () => expect(generateGcode('surfacing', BASE, { stepover: 12, direction: 'W', perimeter: false })).toBe(fixture('surfacing_W')))
-  it('E with perimeter', () => expect(generateGcode('surfacing', BASE, { stepover: 12, direction: 'E', perimeter: true })).toBe(fixture('surfacing_perim')))
-  it('3-pass multipass', () => expect(generateGcode('surfacing', BASE, { stepover: 12, direction: 'E', perimeter: false, passes: 3 })).toBe(fixture('surfacing_multipass')))
+  it('E no perimeter', () =>
+    expect(generateGcode('surfacing', BASE, { stepover: 12, direction: 'E', perimeter: false })).toBe(
+      fixture('surfacing_E'),
+    ))
+  it('N no perimeter', () =>
+    expect(generateGcode('surfacing', BASE, { stepover: 12, direction: 'N', perimeter: false })).toBe(
+      fixture('surfacing_N'),
+    ))
+  it('W no perimeter', () =>
+    expect(generateGcode('surfacing', BASE, { stepover: 12, direction: 'W', perimeter: false })).toBe(
+      fixture('surfacing_W'),
+    ))
+  it('E with perimeter', () =>
+    expect(generateGcode('surfacing', BASE, { stepover: 12, direction: 'E', perimeter: true })).toBe(
+      fixture('surfacing_perim'),
+    ))
+  it('3-pass multipass', () =>
+    expect(generateGcode('surfacing', BASE, { stepover: 12, direction: 'E', perimeter: false, passes: 3 })).toBe(
+      fixture('surfacing_multipass'),
+    ))
 })
 
 describe('hog', () => {
   it('X single pass', () => {
-    expect(generateGcode('hog', BASE, { orientation: 'X', hog_count: 1, hog_offset: 10, final_feedrate: 1000, final_stepover: 3, stepover: 12 })).toBe(fixture('hog_X'))
+    expect(
+      generateGcode('hog', BASE, {
+        orientation: 'X',
+        hog_count: 1,
+        hog_offset: 10,
+        final_feedrate: 1000,
+        final_stepover: 3,
+        stepover: 12,
+      }),
+    ).toBe(fixture('hog_X'))
   })
   it('Y single pass', () => {
-    expect(generateGcode('hog', BASE, { orientation: 'Y', hog_count: 1, hog_offset: 10, final_feedrate: 1000, final_stepover: 3, stepover: 12 })).toBe(fixture('hog_Y'))
+    expect(
+      generateGcode('hog', BASE, {
+        orientation: 'Y',
+        hog_count: 1,
+        hog_offset: 10,
+        final_feedrate: 1000,
+        final_stepover: 3,
+        stepover: 12,
+      }),
+    ).toBe(fixture('hog_Y'))
   })
   it('X multi pass', () => {
-    expect(generateGcode('hog', BASE, { orientation: 'X', hog_count: 3, hog_offset: 10, final_feedrate: 2000, final_stepover: 6, stepover: 12 })).toBe(fixture('hog_multi'))
+    expect(
+      generateGcode('hog', BASE, {
+        orientation: 'X',
+        hog_count: 3,
+        hog_offset: 10,
+        final_feedrate: 2000,
+        final_stepover: 6,
+        stepover: 12,
+      }),
+    ).toBe(fixture('hog_multi'))
   })
 })
 
 describe('zero flag', () => {
-  it('adds G92', () => expect(generateGcode('x', { ...BASE, zero: true }, {})).toBe(fixture('x_zero')))
+  it('bottom-left (default)', () =>
+    expect(generateGcode('x', { ...BASE, zero: true, zero_ref: 'bottom-left' }, {})).toBe(fixture('x_zero')))
+  it('middle-center -> G92 X50 Y50', () =>
+    expect(generateGcode('x', { ...BASE, zero: true, zero_ref: 'middle-center' }, {})).toBe(fixture('x_zero_center')))
+
+  it.each([
+    ['bottom-left', 'G92 X0 Y0 Z0'],
+    ['bottom-center', 'G92 X50 Y0 Z0'],
+    ['bottom-right', 'G92 X100 Y0 Z0'],
+    ['middle-left', 'G92 X0 Y50 Z0'],
+    ['middle-center', 'G92 X50 Y50 Z0'],
+    ['middle-right', 'G92 X100 Y50 Z0'],
+    ['top-left', 'G92 X0 Y100 Z0'],
+    ['top-center', 'G92 X50 Y100 Z0'],
+    ['top-right', 'G92 X100 Y100 Z0'],
+  ] as const)('zero_ref %s emits %s', (zero_ref, expected) =>
+    expect(generateGcode('x', { ...BASE, zero: true, zero_ref }, {})).toContain(expected))
 })

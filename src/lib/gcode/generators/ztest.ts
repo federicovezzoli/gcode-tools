@@ -1,8 +1,16 @@
-import { UniversalParams } from '../types'
+import type { UniversalParams } from '../types'
 
 // z_test: draws an X shape at (x, y) with given size.
 // Pen descends to zdn at center of each diagonal, rises back to zup at corners.
-function z_test(x: number, y: number, size: number, zup: string, zdn: string, rapid: number, drawspeed: number): string {
+function z_test(
+  x: number,
+  y: number,
+  size: number,
+  zup: string,
+  zdn: string,
+  rapid: number,
+  drawspeed: number,
+): string {
   const x0 = (x - size / 2).toFixed(3)
   const x1 = (x + size / 2).toFixed(3)
   const y0 = (y - size / 2).toFixed(3)

@@ -15,8 +15,20 @@ export type Mode =
 
 export type Direction = 'N' | 'S' | 'E' | 'W'
 
+export type ZeroRef =
+  | 'top-left'
+  | 'top-center'
+  | 'top-right'
+  | 'middle-left'
+  | 'middle-center'
+  | 'middle-right'
+  | 'bottom-left'
+  | 'bottom-center'
+  | 'bottom-right'
+
 export interface UniversalParams {
   zero: boolean
+  zero_ref?: ZeroRef // which point on the workpiece is the G92 origin; defaults to 'bottom-left'
   pen_d: number
   pen_u: number
   rapid: number

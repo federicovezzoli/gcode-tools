@@ -1,4 +1,4 @@
-import { UniversalParams } from '../types'
+import type { UniversalParams } from '../types'
 
 export function generateText(textInput: string, u: UniversalParams): string {
   // The original gcode_tpgen uses an external char_render.js dependency (render_text function)

@@ -1,11 +1,19 @@
-import { UniversalParams } from '../types'
+import type { UniversalParams } from '../types'
 
 // accel_pre: draw a 10mm reference segment before the acceleration test
-function accel_pre(mode: string, i: number, zup: string, zdn: string, rapid: number, vertical: number, drawspeed: number): string {
-  const xstart = (mode === 'accel_x') ? 2 * i : 0
-  const xend   = (mode === 'accel_x') ? 2 * i : 10
-  const ystart = (mode === 'accel_x') ? 0     : 2 * i
-  const yend   = (mode === 'accel_x') ? 10    : 2 * i
+function accel_pre(
+  mode: string,
+  i: number,
+  zup: string,
+  zdn: string,
+  rapid: number,
+  vertical: number,
+  drawspeed: number,
+): string {
+  const xstart = mode === 'accel_x' ? 2 * i : 0
+  const xend = mode === 'accel_x' ? 2 * i : 10
+  const ystart = mode === 'accel_x' ? 0 : 2 * i
+  const yend = mode === 'accel_x' ? 10 : 2 * i
 
   const xpre = xstart + 5
   const ypre = ystart + 5
@@ -28,11 +36,11 @@ function accel_pre(mode: string, i: number, zup: string, zdn: string, rapid: num
 
 // accel_execute: ramp velocity up then back down across the extent, subdivided into 40 segments
 function accel_execute(mode: string, i: number, extent: number, rapid: number): string {
-  const subdiv = 40  // subdivide extent into this many smaller segments
-  const xstart = (mode === 'accel_x') ? 2 * i : 10
-  const ystart = (mode === 'accel_x') ? 10    : 2 * i
-  const xstep  = (mode === 'accel_x') ? extent / subdiv : 0
-  const ystep  = (mode === 'accel_x') ? 0               : extent / subdiv
+  const subdiv = 40 // subdivide extent into this many smaller segments
+  const xstart = mode === 'accel_x' ? 2 * i : 10
+  const ystart = mode === 'accel_x' ? 10 : 2 * i
+  const xstep = mode === 'accel_x' ? extent / subdiv : 0
+  const ystep = mode === 'accel_x' ? 0 : extent / subdiv
 
   let out = ''
   for (let j = 1; j <= subdiv; j++) {
@@ -51,11 +59,19 @@ function accel_execute(mode: string, i: number, extent: number, rapid: number): 
 }
 
 // accel_post: draw a second 10mm reference segment after the acceleration test
-function accel_post(mode: string, i: number, zup: string, zdn: string, rapid: number, vertical: number, drawspeed: number): string {
-  const xstart = (mode === 'accel_x') ? 2 * i : 11
-  const xend   = (mode === 'accel_x') ? 2 * i : 21
-  const ystart = (mode === 'accel_x') ? 11    : 2 * i
-  const yend   = (mode === 'accel_x') ? 21    : 2 * i
+function accel_post(
+  mode: string,
+  i: number,
+  zup: string,
+  zdn: string,
+  rapid: number,
+  vertical: number,
+  drawspeed: number,
+): string {
+  const xstart = mode === 'accel_x' ? 2 * i : 11
+  const xend = mode === 'accel_x' ? 2 * i : 21
+  const ystart = mode === 'accel_x' ? 11 : 2 * i
+  const yend = mode === 'accel_x' ? 21 : 2 * i
 
   const xpre = xstart + 5
   const ypre = ystart + 5
@@ -78,20 +94,22 @@ function accel_post(mode: string, i: number, zup: string, zdn: string, rapid: nu
 
 export function generateAccel(
   axis: 'x' | 'y',
-  accel_low: number, accel_high: number, accel_tests: number,
-  u: UniversalParams
+  accel_low: number,
+  accel_high: number,
+  accel_tests: number,
+  u: UniversalParams,
 ): string {
   const { pen_d, pen_u, rapid, vertical, drawspeed, xsize, ysize } = u
   const zu = ' Z' + pen_u
   const zd = ' Z' + pen_d
-  const mode = 'accel_' + axis  // 'accel_x' or 'accel_y'
+  const mode = 'accel_' + axis // 'accel_x' or 'accel_y'
 
   let out = ''
   out += 'M501\n'
 
   const base_accel = 180
-  const extent = (axis === 'x') ? xsize : ysize
-  const accel_incr = (accel_tests === 1) ? 0 : (accel_high - accel_low) / (accel_tests - 1)
+  const extent = axis === 'x' ? xsize : ysize
+  const accel_incr = accel_tests === 1 ? 0 : (accel_high - accel_low) / (accel_tests - 1)
 
   for (let i = 0; i < accel_tests; i++) {
     out += accel_pre(mode, i, zu, zd, rapid, vertical, drawspeed)
