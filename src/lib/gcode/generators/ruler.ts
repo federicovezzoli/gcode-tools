@@ -21,10 +21,10 @@ function x_zig(
     if (x % 10 === 0) {
       ystart = ystart - 2
     }
-    out += 'G0 X' + x + ' Y' + ystart + zup + ' F' + rapid + '\n'
-    out += 'G1 X' + x + ' Y' + ystart + zdn + ' F' + vertical + '\n'
-    out += 'G1 X' + x + ' Y' + yend + zdn + ' F' + drawspeed + '\n'
-    out += 'G0 X' + x + ' Y' + yend + zup + ' F' + vertical + '\n'
+    out += `G0 X${x} Y${ystart}${zup} F${rapid}\n`
+    out += `G1 X${x} Y${ystart}${zdn} F${vertical}\n`
+    out += `G1 X${x} Y${yend}${zdn} F${drawspeed}\n`
+    out += `G0 X${x} Y${yend}${zup} F${vertical}\n`
   }
   return out
 }
@@ -50,10 +50,10 @@ function x_zag(
     if (x % 10 === 0) {
       yend = yend + 2 // 10 mm goes from ymid+0.5 to ymid+10
     }
-    out += 'G0 X' + x + ' Y' + ystart + zup + ' F' + rapid + '\n'
-    out += 'G1 X' + x + ' Y' + ystart + zdn + ' F' + vertical + '\n'
-    out += 'G1 X' + x + ' Y' + yend + zdn + ' F' + drawspeed + '\n'
-    out += 'G0 X' + x + ' Y' + yend + zup + ' F' + vertical + '\n'
+    out += `G0 X${x} Y${ystart}${zup} F${rapid}\n`
+    out += `G1 X${x} Y${ystart}${zdn} F${vertical}\n`
+    out += `G1 X${x} Y${yend}${zdn} F${drawspeed}\n`
+    out += `G0 X${x} Y${yend}${zup} F${vertical}\n`
   }
   return out
 }
@@ -79,10 +79,10 @@ function y_zig(
     if (y % 10 === 0) {
       xstart = xstart - 2
     }
-    out += 'G0 X' + xstart + ' Y' + y + zup + ' F' + rapid + '\n'
-    out += 'G1 X' + xstart + ' Y' + y + zdn + ' F' + vertical + '\n'
-    out += 'G1 X' + xend + ' Y' + y + zdn + ' F' + drawspeed + '\n'
-    out += 'G0 X' + xend + ' Y' + y + zup + ' F' + vertical + '\n'
+    out += `G0 X${xstart} Y${y}${zup} F${rapid}\n`
+    out += `G1 X${xstart} Y${y}${zdn} F${vertical}\n`
+    out += `G1 X${xend} Y${y}${zdn} F${drawspeed}\n`
+    out += `G0 X${xend} Y${y}${zup} F${vertical}\n`
   }
   return out
 }
@@ -108,10 +108,10 @@ function y_zag(
     if (y % 10 === 0) {
       xend = xend + 2
     }
-    out += 'G0 X' + xstart + ' Y' + y + zup + ' F' + rapid + '\n'
-    out += 'G1 X' + xstart + ' Y' + y + zdn + ' F' + vertical + '\n'
-    out += 'G1 X' + xend + ' Y' + y + zdn + ' F' + drawspeed + '\n'
-    out += 'G0 X' + xend + ' Y' + y + zup + ' F' + vertical + '\n'
+    out += `G0 X${xstart} Y${y}${zup} F${rapid}\n`
+    out += `G1 X${xstart} Y${y}${zdn} F${vertical}\n`
+    out += `G1 X${xend} Y${y}${zdn} F${drawspeed}\n`
+    out += `G0 X${xend} Y${y}${zup} F${vertical}\n`
   }
   return out
 }
@@ -124,8 +124,8 @@ function y_zag(
 //            y_zig + y_zag at xmid=xsize-10  (right Y ruler)
 export function generateRuler(mode: 'x' | 'y' | 'perim', u: UniversalParams): string {
   const { pen_d, pen_u, rapid, vertical, drawspeed, xsize, ysize } = u
-  const zu = ' Z' + pen_u
-  const zd = ' Z' + pen_d
+  const zu = ` Z${pen_u}`
+  const zd = ` Z${pen_d}`
   let out = ''
 
   if (mode === 'x') {

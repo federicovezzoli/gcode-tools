@@ -43,23 +43,23 @@ function top_hat(
   const xC = xD + xl * height
   const yC = yD + yl * height
 
-  const fspeed = ' F' + Math.round(drawspeed)
+  const fspeed = ` F${Math.round(drawspeed)}`
 
   let out = ''
   // move to x1, y1 and plunge to z depth
-  out += 'G0' + zup + ' F' + vertical + '\n'
-  out += 'G0 X' + xstart.toFixed(3) + ' Y' + ystart.toFixed(3) + ' F' + rapid + '\n'
-  out += 'G1' + zdn + ' F' + vertical + '\n'
+  out += `G0${zup} F${vertical}\n`
+  out += `G0 X${xstart.toFixed(3)} Y${ystart.toFixed(3)} F${rapid}\n`
+  out += `G1${zdn} F${vertical}\n`
 
   // Travel to A, B, C, D, and end
-  out += 'G1 X' + xA.toFixed(3) + ' Y' + yA.toFixed(3) + fspeed + '\n'
-  out += 'G1 X' + xB.toFixed(3) + ' Y' + yB.toFixed(3) + fspeed + '\n'
-  out += 'G1 X' + xC.toFixed(3) + ' Y' + yC.toFixed(3) + fspeed + '\n'
-  out += 'G1 X' + xD.toFixed(3) + ' Y' + yD.toFixed(3) + fspeed + '\n'
-  out += 'G1 X' + xend.toFixed(3) + ' Y' + yend.toFixed(3) + fspeed + '\n'
+  out += `G1 X${xA.toFixed(3)} Y${yA.toFixed(3)}${fspeed}\n`
+  out += `G1 X${xB.toFixed(3)} Y${yB.toFixed(3)}${fspeed}\n`
+  out += `G1 X${xC.toFixed(3)} Y${yC.toFixed(3)}${fspeed}\n`
+  out += `G1 X${xD.toFixed(3)} Y${yD.toFixed(3)}${fspeed}\n`
+  out += `G1 X${xend.toFixed(3)} Y${yend.toFixed(3)}${fspeed}\n`
 
   // raise up
-  out += 'G0' + zup + ' F' + vertical + '\n'
+  out += `G0${zup} F${vertical}\n`
   return out
 }
 
@@ -116,11 +116,11 @@ function full_speed_swipe(
 ): string {
   let out = ''
   out += '; full speed cut\n'
-  out += 'G0' + zup + ' F' + vertical + '\n'
-  out += 'G0 X' + xstart.toFixed(3) + ' Y' + ystart.toFixed(3) + ' F' + rapid + '\n'
-  out += 'G1' + zdn + ' F' + vertical + '\n'
-  out += 'G1 X' + xend.toFixed(3) + ' Y' + yend.toFixed(3) + ' F' + Math.round(drawspeed) + '\n'
-  out += 'G0' + zup + ' F' + vertical + '\n'
+  out += `G0${zup} F${vertical}\n`
+  out += `G0 X${xstart.toFixed(3)} Y${ystart.toFixed(3)} F${rapid}\n`
+  out += `G1${zdn} F${vertical}\n`
+  out += `G1 X${xend.toFixed(3)} Y${yend.toFixed(3)} F${Math.round(drawspeed)}\n`
+  out += `G0${zup} F${vertical}\n`
   return out
 }
 
@@ -212,8 +212,8 @@ export function generateHog(
   u: UniversalParams,
 ): string {
   const { pen_d, pen_u, rapid, vertical, drawspeed, drawspeed_slow } = u
-  const zu = ' Z' + pen_u
-  const zd = ' Z' + pen_d
+  const zu = ` Z${pen_u}`
+  const zd = ` Z${pen_d}`
 
   const speed_step = (final_feedrate - drawspeed) / (hog_count - 1) // may be NaN if hog_count is 1
   const stepover_step = (final_stepover - stepover) / (hog_count - 1)

@@ -20,17 +20,17 @@ function accel_pre(
 
   let out = ''
   // raise pen
-  out += 'G0' + zup + ' F' + vertical + '\n'
+  out += `G0${zup} F${vertical}\n`
   // move to xpre, ypre
-  out += 'G0 X' + xpre.toFixed(3) + ' Y' + ypre.toFixed(3) + ' F' + rapid + '\n'
+  out += `G0 X${xpre.toFixed(3)} Y${ypre.toFixed(3)} F${rapid}\n`
   // move to xstart, ystart
-  out += 'G0 X' + xstart.toFixed(3) + ' Y' + ystart.toFixed(3) + ' F' + rapid + '\n'
+  out += `G0 X${xstart.toFixed(3)} Y${ystart.toFixed(3)} F${rapid}\n`
   // lower pen
-  out += 'G1' + zdn + ' F' + vertical + '\n'
+  out += `G1${zdn} F${vertical}\n`
   // move to xend, yend
-  out += 'G1 X' + xend.toFixed(3) + ' Y' + yend.toFixed(3) + ' F' + drawspeed + '\n'
+  out += `G1 X${xend.toFixed(3)} Y${yend.toFixed(3)} F${drawspeed}\n`
   // raise pen
-  out += 'G0' + zup + ' F' + vertical + '\n'
+  out += `G0${zup} F${vertical}\n`
   return out
 }
 
@@ -47,13 +47,13 @@ function accel_execute(mode: string, i: number, extent: number, rapid: number): 
     const x = xstart + j * xstep
     const y = ystart + j * ystep
     const vel = rapid * Math.sqrt(j / subdiv)
-    out += 'G1 X' + x.toFixed(3) + ' Y' + y.toFixed(3) + ' F' + Math.round(vel) + '\n'
+    out += `G1 X${x.toFixed(3)} Y${y.toFixed(3)} F${Math.round(vel)}\n`
   }
   for (let j = subdiv - 1; j >= 0; j--) {
     const x = xstart + j * xstep
     const y = ystart + j * ystep
     const vel = rapid * Math.sqrt((j + 1) / subdiv)
-    out += 'G1 X' + x.toFixed(3) + ' Y' + y.toFixed(3) + ' F' + Math.round(vel) + '\n'
+    out += `G1 X${x.toFixed(3)} Y${y.toFixed(3)} F${Math.round(vel)}\n`
   }
   return out
 }
@@ -78,17 +78,17 @@ function accel_post(
 
   let out = ''
   // raise pen
-  out += 'G0' + zup + ' F' + vertical + '\n'
+  out += `G0${zup} F${vertical}\n`
   // move to xpre, ypre
-  out += 'G0 X' + xpre.toFixed(3) + ' Y' + ypre.toFixed(3) + ' F' + rapid + '\n'
+  out += `G0 X${xpre.toFixed(3)} Y${ypre.toFixed(3)} F${rapid}\n`
   // move to xstart, ystart
-  out += 'G0 X' + xstart.toFixed(3) + ' Y' + ystart.toFixed(3) + ' F' + rapid + '\n'
+  out += `G0 X${xstart.toFixed(3)} Y${ystart.toFixed(3)} F${rapid}\n`
   // lower pen
-  out += 'G1' + zdn + ' F' + vertical + '\n'
+  out += `G1${zdn} F${vertical}\n`
   // move to xend, yend
-  out += 'G1 X' + xend.toFixed(3) + ' Y' + yend.toFixed(3) + ' F' + drawspeed + '\n'
+  out += `G1 X${xend.toFixed(3)} Y${yend.toFixed(3)} F${drawspeed}\n`
   // raise pen
-  out += 'G0' + zup + ' F' + vertical + '\n'
+  out += `G0${zup} F${vertical}\n`
   return out
 }
 
@@ -100,9 +100,9 @@ export function generateAccel(
   u: UniversalParams,
 ): string {
   const { pen_d, pen_u, rapid, vertical, drawspeed, xsize, ysize } = u
-  const zu = ' Z' + pen_u
-  const zd = ' Z' + pen_d
-  const mode = 'accel_' + axis // 'accel_x' or 'accel_y'
+  const zu = ` Z${pen_u}`
+  const zd = ` Z${pen_d}`
+  const mode = `accel_${axis}` // 'accel_x' or 'accel_y'
 
   let out = ''
   out += 'M501\n'
@@ -118,26 +118,26 @@ export function generateAccel(
     const accel_value = Math.round(accel_low + i * accel_incr)
     out += 'M400\n'
     if (axis === 'x') {
-      out += 'M201 X' + accel_value + '\n'
+      out += `M201 X${accel_value}\n`
     } else {
-      out += 'M201 Y' + accel_value + '\n'
+      out += `M201 Y${accel_value}\n`
     }
-    out += 'M204 T' + accel_value + '\n'
+    out += `M204 T${accel_value}\n`
     out += 'M400\n'
 
     out += accel_execute(mode, i, extent, rapid)
 
     // Set acceleration back to base value of 180
     out += 'M400\n'
-    out += 'M201 X' + base_accel + ' Y' + base_accel + '\n'
-    out += 'M204 T' + base_accel + '\n'
+    out += `M201 X${base_accel} Y${base_accel}\n`
+    out += `M204 T${base_accel}\n`
     out += 'M400\n'
 
     out += accel_post(mode, i, zu, zd, rapid, vertical, drawspeed)
   }
 
-  out += 'G0' + zu + ' F' + vertical + '\n'
-  out += 'G0 X0 Y0 F' + rapid + '\n'
+  out += `G0${zu} F${vertical}\n`
+  out += `G0 X0 Y0 F${rapid}\n`
   out += 'M501\n'
 
   return out

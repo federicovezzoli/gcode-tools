@@ -19,22 +19,22 @@ function z_test(
   const yc = y.toFixed(3)
 
   let out = ''
-  out += 'G0 X' + x0 + ' Y' + y0 + zup + ' F' + rapid + '\n'
-  out += 'G1 X' + xc + ' Y' + yc + zdn + ' F' + drawspeed + '\n'
-  out += 'G1 X' + x1 + ' Y' + y1 + zup + ' F' + drawspeed + '\n'
-  out += 'G0 X' + x0 + ' Y' + y1 + zup + ' F' + rapid + '\n'
-  out += 'G1 X' + xc + ' Y' + yc + zdn + ' F' + drawspeed + '\n'
-  out += 'G1 X' + x1 + ' Y' + y0 + zup + ' F' + drawspeed + '\n'
+  out += `G0 X${x0} Y${y0}${zup} F${rapid}\n`
+  out += `G1 X${xc} Y${yc}${zdn} F${drawspeed}\n`
+  out += `G1 X${x1} Y${y1}${zup} F${drawspeed}\n`
+  out += `G0 X${x0} Y${y1}${zup} F${rapid}\n`
+  out += `G1 X${xc} Y${yc}${zdn} F${drawspeed}\n`
+  out += `G1 X${x1} Y${y0}${zup} F${drawspeed}\n`
   return out
 }
 
 export function generateZTestCorners(zxsize: number, u: UniversalParams): string {
   const { pen_d, pen_u, rapid, drawspeed, xsize, ysize, vertical } = u
-  const zu = ' Z' + pen_u
-  const zd = ' Z' + pen_d
+  const zu = ` Z${pen_u}`
+  const zd = ` Z${pen_d}`
   let out = ''
 
-  out += 'G0' + zu + ' F' + vertical + '\n'
+  out += `G0${zu} F${vertical}\n`
   out += z_test(zxsize / 2, zxsize / 2, zxsize, zu, zd, rapid, drawspeed)
   out += z_test(xsize - zxsize / 2, zxsize / 2, zxsize, zu, zd, rapid, drawspeed)
   out += z_test(xsize - zxsize / 2, ysize - zxsize / 2, zxsize, zu, zd, rapid, drawspeed)
@@ -45,11 +45,11 @@ export function generateZTestCorners(zxsize: number, u: UniversalParams): string
 
 export function generateZTestGrid(zxsize: number, u: UniversalParams): string {
   const { pen_d, pen_u, rapid, drawspeed, xsize, ysize, vertical } = u
-  const zu = ' Z' + pen_u
-  const zd = ' Z' + pen_d
+  const zu = ` Z${pen_u}`
+  const zd = ` Z${pen_d}`
   let out = ''
 
-  out += 'G0' + zu + ' F' + vertical + '\n'
+  out += `G0${zu} F${vertical}\n`
 
   // minimum 1 mm space between X marks: N*zxsize+(N-1)*space <= xsize (or ysize)
   const space = 1

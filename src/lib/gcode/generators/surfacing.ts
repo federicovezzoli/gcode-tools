@@ -12,7 +12,7 @@ function gen_subdivided_line(x0: number, y0: number, x1: number, y1: number, dra
   for (let i = 1; i <= stroke_segs; i++) {
     const x = x0 + i * dx
     const y = y0 + i * dy
-    out += 'G1 X' + x.toFixed(3) + ' Y' + y.toFixed(3) + ' F' + drawspeed + '\n'
+    out += `G1 X${x.toFixed(3)} Y${y.toFixed(3)} F${drawspeed}\n`
   }
   return out
 }
@@ -23,7 +23,7 @@ function surfacing_perim(
   xsize: number,
   ysize: number,
   stepover: number,
-  direction: string,
+  _direction: string,
   zup: string,
   zdn: string,
   rapid: number,
@@ -35,10 +35,10 @@ function surfacing_perim(
   const slow = Math.ceil(drawspeed / 4)
   let out = ''
 
-  out += 'G0 ' + zup + ' F' + vertical + '\n' // raise to zup
-  out += 'G0 X' + xstart + ' Y' + ystart + ' F' + rapid + '\n' // move to starting location where plunge occurs
-  out += 'G1 ' + zdn + ' F' + vertical + '\n' // plunge to zdn
-  out += 'G1 X0 Y' + ystart + ' F' + slow + '\n' // engage laterally but slowly
+  out += `G0 ${zup} F${vertical}\n` // raise to zup
+  out += `G0 X${xstart} Y${ystart} F${rapid}\n` // move to starting location where plunge occurs
+  out += `G1 ${zdn} F${vertical}\n` // plunge to zdn
+  out += `G1 X0 Y${ystart} F${slow}\n` // engage laterally but slowly
   out += gen_subdivided_line(0, ystart, 0, ysize, drawspeed) // run north along west edge
   out += gen_subdivided_line(0, ysize, xsize, ysize, drawspeed) // run east along north edge
   out += gen_subdivided_line(xsize, ysize, xsize, 0, drawspeed) // run south along east edge
@@ -54,7 +54,7 @@ function surfacing_perim(
   out += gen_subdivided_line(xsize - stepover, stepover, stepover, stepover, drawspeed)
   out += gen_subdivided_line(stepover, stepover, 0, 0, drawspeed)
 
-  out += 'G0 ' + zup + ' F' + vertical + '\n' // raise to zup
+  out += `G0 ${zup} F${vertical}\n` // raise to zup
   return out
 }
 
@@ -115,19 +115,19 @@ function surfacing(
   for (let row = 0; row < nrows; row++) {
     const rowcoord = rowstart + row * rowstep
     if (horiz) {
-      out += 'G0 ' + zup + ' F' + vertical + '\n' // raise to zup
-      out += 'G0 X' + strokestart + ' Y' + rowcoord.toFixed(3) + ' F' + rapid + '\n' // rapid move
-      out += 'G1 ' + zdn + ' F' + vertical + '\n' // plunge to zdn
+      out += `G0 ${zup} F${vertical}\n` // raise to zup
+      out += `G0 X${strokestart} Y${rowcoord.toFixed(3)} F${rapid}\n` // rapid move
+      out += `G1 ${zdn} F${vertical}\n` // plunge to zdn
       out += gen_subdivided_line(strokestart, rowcoord, strokeend, rowcoord, drawspeed)
     } else {
-      out += 'G0 ' + zup + ' F' + vertical + '\n' // raise to zup
-      out += 'G0 X' + rowcoord.toFixed(3) + ' Y' + strokestart + ' F' + rapid + '\n' // rapid move
-      out += 'G1 ' + zdn + ' F' + vertical + '\n' // plunge to zdn
+      out += `G0 ${zup} F${vertical}\n` // raise to zup
+      out += `G0 X${rowcoord.toFixed(3)} Y${strokestart} F${rapid}\n` // rapid move
+      out += `G1 ${zdn} F${vertical}\n` // plunge to zdn
       out += gen_subdivided_line(rowcoord, strokestart, rowcoord, strokeend, drawspeed)
     }
   }
-  out += 'G0 ' + zup + ' F' + vertical + '\n' // raise to zup
-  out += 'G0 X0 Y0 F' + rapid + '\n' // rapid move to 0,0
+  out += `G0 ${zup} F${vertical}\n` // raise to zup
+  out += `G0 X0 Y0 F${rapid}\n` // rapid move to 0,0
   return out
 }
 
@@ -139,12 +139,12 @@ export function generateSurfacing(
   u: UniversalParams,
 ): string {
   const { pen_d, pen_u, rapid, vertical, drawspeed, xsize, ysize } = u
-  const zu = ' Z' + pen_u
+  const zu = ` Z${pen_u}`
   const dir = direction.toUpperCase()
   let out = ''
 
   if (passes <= 1) {
-    const zd = ' Z' + pen_d
+    const zd = ` Z${pen_d}`
     if (perimeter) {
       out += surfacing_perim(xsize, ysize, stepover, dir, zu, zd, rapid, vertical, drawspeed)
       if (dir === 'E' || dir === 'W') {
@@ -181,7 +181,7 @@ export function generateSurfacing(
     }
   } else {
     for (let pass = 1; pass <= passes; pass++) {
-      const zd = ' Z' + (pen_d * pass).toFixed(3)
+      const zd = ` Z${(pen_d * pass).toFixed(3)}`
 
       // Label every pass for clarity in the G-code file.
       out += `; --- Pass ${pass} of ${passes} ---\n`

@@ -20,9 +20,9 @@ export function timestamp(): string {
 
 // Format Z string like the original: " Z{n}"
 export function zup(pen_u: number): string {
-  return ' Z' + pen_u
+  return ` Z${pen_u}`
 }
 
 export function zdn(pen_d: number): string {
-  return ' Z' + pen_d
+  return ` Z${pen_d}`
 }

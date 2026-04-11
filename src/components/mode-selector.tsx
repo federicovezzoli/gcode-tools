@@ -47,6 +47,7 @@ export function ModeSelector({ value, onChange }: ModeSelectorProps) {
         return (
           <button
             key={mode.value}
+            type="button"
             data-active={active}
             onClick={() => onChange(mode.value)}
             className={cn(

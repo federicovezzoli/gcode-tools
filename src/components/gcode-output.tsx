@@ -13,9 +13,7 @@ interface GcodeOutputProps {
 
 export function GcodeOutput({ gcode, filename }: GcodeOutputProps) {
   const [copied, setCopied] = useState(false)
-
   const lineCount = gcode ? gcode.split('\n').length : 0
-  const charCount = gcode ? gcode.length : 0
 
   function handleCopy() {
     navigator.clipboard.writeText(gcode)

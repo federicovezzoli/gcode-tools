@@ -21,8 +21,8 @@ function dense_x_segments(
   const xdir = xend > xstart ? 1 : -1
   let out = ''
 
-  out += 'G0 X' + xstart + ' Y' + y + zup + ' F' + rapid + '\n'
-  out += 'G1' + zdn + ' F' + vertical + '\n'
+  out += `G0 X${xstart} Y${y}${zup} F${rapid}\n`
+  out += `G1${zdn} F${vertical}\n`
 
   if (diag) {
     const dlength = seglength * Math.sqrt(0.5)
@@ -31,12 +31,12 @@ function dense_x_segments(
       const yy = (y + i * dlength).toFixed(4)
       if (efficient) {
         if (i === 1) {
-          out += 'G1 X' + x + ' Y' + yy + ' F' + drawspeed + '\n' // no need to repeat Z position
+          out += `G1 X${x} Y${yy} F${drawspeed}\n` // no need to repeat Z position
         } else {
-          out += 'G1 X' + x + ' Y' + yy + '\n' // no need to repeat Z position or feedrate
+          out += `G1 X${x} Y${yy}\n` // no need to repeat Z position or feedrate
         }
       } else {
-        out += 'G1 X' + x + ' Y' + yy + zdn + ' F' + drawspeed + '\n'
+        out += `G1 X${x} Y${yy}${zdn} F${drawspeed}\n`
       }
     }
   } else {
@@ -45,17 +45,17 @@ function dense_x_segments(
       if (efficient) {
         // bare minimum to save bandwidth
         if (i === 1) {
-          out += 'G1 X' + x + ' F' + drawspeed + '\n'
+          out += `G1 X${x} F${drawspeed}\n`
         } else {
-          out += 'G1 X' + x + '\n'
+          out += `G1 X${x}\n`
         }
       } else {
-        out += 'G1 X' + x + ' Y' + y + zdn + ' F' + drawspeed + '\n'
+        out += `G1 X${x} Y${y}${zdn} F${drawspeed}\n`
       }
     }
   }
 
-  out += 'G0' + zup + ' F' + vertical + '\n'
+  out += `G0${zup} F${vertical}\n`
   return out
 }
 
@@ -67,15 +67,15 @@ export function generateDenseSegments(
   u: UniversalParams,
 ): string {
   const { pen_d, pen_u, rapid, vertical, drawspeed, xsize, ysize } = u
-  const zu = ' Z' + pen_u
-  const zd = ' Z' + pen_d
+  const zu = ` Z${pen_u}`
+  const zd = ` Z${pen_d}`
   let out = ''
 
-  out += 'G0' + zu + ' F' + vertical + '\n'
+  out += `G0${zu} F${vertical}\n`
   const ylines = Math.floor(ysize) + 1
   for (let y = 0; y < ylines; y++) {
     const seglength = dense_minseg + ((dense_maxseg - dense_minseg) * y) / (ylines - 1)
-    out += '; drawing segments of length ' + seglength + '\n'
+    out += `; drawing segments of length ${seglength}\n`
     out += dense_x_segments(seglength, 0, xsize, y, zu, zd, rapid, vertical, drawspeed, dense_efficient, dense_diagonal)
   }
 
