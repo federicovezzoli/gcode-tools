@@ -1,3 +1,11 @@
+# [1.7.0](https://github.com/federicovezzoli/gcode-tpgen/compare/v1.6.0...v1.7.0) (2026-04-11)
+
+
+### Features
+
+* enhance zero reference point handling and formatting in G-code generation ([f3baf2d](https://github.com/federicovezzoli/gcode-tpgen/commit/f3baf2db425d5573e6c25ba6b5ac169f5d6b72a2))
+* Implement zero reference point selection for G92 origin in universal parameters ([4b7332f](https://github.com/federicovezzoli/gcode-tpgen/commit/4b7332f2b77f3d82f3e4dd6d9b29b2a46f5c5a26))
+
 # [1.6.0](https://github.com/federicovezzoli/gcode-tpgen/compare/v1.5.0...v1.6.0) (2026-03-24)
 
 
