@@ -10,6 +10,7 @@
 ; direction: E
 ; perimeter: false
 ; passes: 3
+; --- Pass 1 of 3 ---
 G0  Z0.5 F800
 G0 X0 Y100.000 F2000
 G1  Z-0.500 F800
@@ -352,8 +353,7 @@ G1 X96.774 Y0.000 F1000
 G1 X100.000 Y0.000 F1000
 G0  Z0.5 F800
 G0 X0 Y0 F2000
-G0 Z0.5 F800
-M0 ; Pass 1 of 3 complete - press cycle start to continue
+M0 ; Pass 1 of 3 complete - vacuum chips and check depth if needed
 ; --- Pass 2 of 3 ---
 G0  Z0.5 F800
 G0 X0 Y100.000 F2000
@@ -697,8 +697,7 @@ G1 X96.774 Y0.000 F1000
 G1 X100.000 Y0.000 F1000
 G0  Z0.5 F800
 G0 X0 Y0 F2000
-G0 Z0.5 F800
-M0 ; Pass 2 of 3 complete - press cycle start to continue
+M0 ; Pass 2 of 3 complete - vacuum chips and check depth if needed
 ; --- Pass 3 of 3 ---
 G0  Z0.5 F800
 G0 X0 Y100.000 F2000

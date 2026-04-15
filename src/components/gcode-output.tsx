@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 interface GcodeOutputProps {
   gcode: string
@@ -13,9 +13,7 @@ interface GcodeOutputProps {
 
 export function GcodeOutput({ gcode, filename }: GcodeOutputProps) {
   const [copied, setCopied] = useState(false)
-
   const lineCount = gcode ? gcode.split('\n').length : 0
-  const charCount = gcode ? gcode.length : 0
 
   function handleCopy() {
     navigator.clipboard.writeText(gcode)
@@ -40,7 +38,9 @@ export function GcodeOutput({ gcode, filename }: GcodeOutputProps) {
           <CardTitle className="text-sm font-medium">G-Code Output</CardTitle>
           {gcode && (
             <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="text-xs font-mono">{lineCount} lines</Badge>
+              <Badge variant="secondary" className="text-xs font-mono">
+                {lineCount} lines
+              </Badge>
               <Button variant="outline" size="sm" className="h-7 text-xs" onClick={handleCopy}>
                 {copied ? 'Copied!' : 'Copy'}
               </Button>
@@ -50,16 +50,12 @@ export function GcodeOutput({ gcode, filename }: GcodeOutputProps) {
             </div>
           )}
         </div>
-        {gcode && (
-          <p className="text-xs text-muted-foreground font-mono">{filename}</p>
-        )}
+        {gcode && <p className="text-xs text-muted-foreground font-mono">{filename}</p>}
       </CardHeader>
       <CardContent className="p-0 pb-4 px-4">
         {gcode ? (
           <ScrollArea className="h-96 rounded-md border bg-muted/30">
-            <pre className="p-4 text-xs font-mono leading-relaxed text-foreground whitespace-pre">
-              {gcode}
-            </pre>
+            <pre className="p-4 text-xs font-mono leading-relaxed text-foreground whitespace-pre">{gcode}</pre>
           </ScrollArea>
         ) : (
           <div className="h-24 flex items-center justify-center rounded-md border border-dashed text-muted-foreground text-sm">

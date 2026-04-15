@@ -1,3 +1,20 @@
+# [1.8.0](https://github.com/federicovezzoli/gcode-tpgen/compare/v1.7.0...v1.8.0) (2026-04-11)
+
+
+### Features
+
+* improve G-code comments for clarity during surfacing passes ([b147ebe](https://github.com/federicovezzoli/gcode-tpgen/commit/b147ebe458a1466347bc1e62a3ef511a0d00e70f))
+* update default values for bit width and stepover in surfacing mode ([0d376a9](https://github.com/federicovezzoli/gcode-tpgen/commit/0d376a9f2dcd11b23f855a656fa233c857288dad))
+* update surfacing parameters for stepover and bit width ([09abea6](https://github.com/federicovezzoli/gcode-tpgen/commit/09abea6d2fd44f86b93728ebccc0ac498ee5e08a))
+
+# [1.7.0](https://github.com/federicovezzoli/gcode-tpgen/compare/v1.6.0...v1.7.0) (2026-04-11)
+
+
+### Features
+
+* enhance zero reference point handling and formatting in G-code generation ([f3baf2d](https://github.com/federicovezzoli/gcode-tpgen/commit/f3baf2db425d5573e6c25ba6b5ac169f5d6b72a2))
+* Implement zero reference point selection for G92 origin in universal parameters ([4b7332f](https://github.com/federicovezzoli/gcode-tpgen/commit/4b7332f2b77f3d82f3e4dd6d9b29b2a46f5c5a26))
+
 # [1.6.0](https://github.com/federicovezzoli/gcode-tpgen/compare/v1.5.0...v1.6.0) (2026-03-24)
 
 

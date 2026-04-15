@@ -1,6 +1,6 @@
 'use client'
 
-import { type Mode } from '@/lib/gcode'
+import type { Mode } from '@/lib/gcode'
 import { cn } from '@/lib/utils'
 
 const MODES: { value: Mode; label: string; group: string }[] = [
@@ -20,12 +20,18 @@ const MODES: { value: Mode; label: string; group: string }[] = [
 ]
 
 const GROUP_COLORS: Record<string, string> = {
-  Rulers: 'data-[active=true]:bg-blue-600 data-[active=true]:border-blue-600 data-[active=false]:hover:border-blue-400 data-[active=false]:hover:text-blue-600',
-  Shape: 'data-[active=true]:bg-green-600 data-[active=true]:border-green-600 data-[active=false]:hover:border-green-400 data-[active=false]:hover:text-green-600',
-  'Z-Level': 'data-[active=true]:bg-purple-600 data-[active=true]:border-purple-600 data-[active=false]:hover:border-purple-400 data-[active=false]:hover:text-purple-600',
-  Acceleration: 'data-[active=true]:bg-orange-600 data-[active=true]:border-orange-600 data-[active=false]:hover:border-orange-400 data-[active=false]:hover:text-orange-600',
-  Advanced: 'data-[active=true]:bg-pink-600 data-[active=true]:border-pink-600 data-[active=false]:hover:border-pink-400 data-[active=false]:hover:text-pink-600',
-  Milling: 'data-[active=true]:bg-yellow-600 data-[active=true]:border-yellow-600 data-[active=false]:hover:border-yellow-400 data-[active=false]:hover:text-yellow-600',
+  Rulers:
+    'data-[active=true]:bg-blue-600 data-[active=true]:border-blue-600 data-[active=false]:hover:border-blue-400 data-[active=false]:hover:text-blue-600',
+  Shape:
+    'data-[active=true]:bg-green-600 data-[active=true]:border-green-600 data-[active=false]:hover:border-green-400 data-[active=false]:hover:text-green-600',
+  'Z-Level':
+    'data-[active=true]:bg-purple-600 data-[active=true]:border-purple-600 data-[active=false]:hover:border-purple-400 data-[active=false]:hover:text-purple-600',
+  Acceleration:
+    'data-[active=true]:bg-orange-600 data-[active=true]:border-orange-600 data-[active=false]:hover:border-orange-400 data-[active=false]:hover:text-orange-600',
+  Advanced:
+    'data-[active=true]:bg-pink-600 data-[active=true]:border-pink-600 data-[active=false]:hover:border-pink-400 data-[active=false]:hover:text-pink-600',
+  Milling:
+    'data-[active=true]:bg-yellow-600 data-[active=true]:border-yellow-600 data-[active=false]:hover:border-yellow-400 data-[active=false]:hover:text-yellow-600',
 }
 
 interface ModeSelectorProps {
@@ -41,6 +47,7 @@ export function ModeSelector({ value, onChange }: ModeSelectorProps) {
         return (
           <button
             key={mode.value}
+            type="button"
             data-active={active}
             onClick={() => onChange(mode.value)}
             className={cn(
