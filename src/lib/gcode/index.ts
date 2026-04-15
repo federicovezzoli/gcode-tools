@@ -7,7 +7,7 @@ import { generateSurfacing } from './generators/surfacing'
 import { generateText } from './generators/text'
 import { generateZTestCorners, generateZTestGrid } from './generators/ztest'
 import type { Mode, ModeParams, UniversalParams } from './types'
-import { fmtCoord, timestamp, zeroRefToCoords } from './utils'
+import { datestamp, fmtCoord, timestamp, zeroRefToCoords } from './utils'
 
 export function generateGcode(mode: Mode, universal: UniversalParams, modeParams: ModeParams): string {
   const { pen_d, pen_u, rapid, vertical, drawspeed, drawspeed_slow, xsize, ysize, zero } = universal
@@ -132,7 +132,15 @@ export function generateGcode(mode: Mode, universal: UniversalParams, modeParams
   return out
 }
 
-export function getFilename(mode: Mode): string {
+export function getFilename(mode: Mode, universal?: UniversalParams, modeParams?: Record<string, any>): string {
+  if (mode === 'surfacing' && universal && modeParams) {
+    const { xsize, ysize, zero, zero_ref } = universal
+    const passes = modeParams.passes ?? 1
+    const passStr = `${passes}${passes === 1 ? 'pass' : 'passes'}`
+    const perimStr = modeParams.perimeter ? '-perim' : ''
+    const zeroStr = zero && zero_ref ? `-${zero_ref}` : ''
+    return `surfacing-${xsize}x${ysize}mm-${passStr}${perimStr}${zeroStr}-${datestamp()}.gcode`
+  }
   return `${mode}-${timestamp()}.gcode`
 }
 

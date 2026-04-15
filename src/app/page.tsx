@@ -76,7 +76,7 @@ export default function Home() {
 
   function handleGenerate() {
     const code = generateGcode(mode, universal, modeParams as any)
-    const fname = getFilename(mode)
+    const fname = getFilename(mode, universal, modeParams)
     setGcode(code)
     setFilename(fname)
   }
