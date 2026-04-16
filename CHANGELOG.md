@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/federicovezzoli/gcode-tpgen/compare/v1.9.0...v1.10.0) (2026-04-16)
+
+
+### Features
+
+* add directional information for milling in ModeParamsForm ([b1a8600](https://github.com/federicovezzoli/gcode-tpgen/commit/b1a86004425989c117b15a4adbf91db3ba7cdb14))
+
 # [1.9.0](https://github.com/federicovezzoli/gcode-tpgen/compare/v1.8.0...v1.9.0) (2026-04-15)
 
 
