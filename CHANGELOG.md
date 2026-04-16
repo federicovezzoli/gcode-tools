@@ -1,3 +1,11 @@
+# [1.11.0](https://github.com/federicovezzoli/gcode-tpgen/compare/v1.10.0...v1.11.0) (2026-04-16)
+
+
+### Features
+
+* add pause functionality for surfacing passes in ModeParamsForm and update Gcode generation ([c403846](https://github.com/federicovezzoli/gcode-tpgen/commit/c403846f05d83d21eff44e60b58ecd1950c7c818))
+* update default stepover value and enhance direction description in ModeParamsForm ([b9ef2a7](https://github.com/federicovezzoli/gcode-tpgen/commit/b9ef2a726c571a70264cf833dff0aa223f7b59f3))
+
 # [1.10.0](https://github.com/federicovezzoli/gcode-tpgen/compare/v1.9.0...v1.10.0) (2026-04-16)
 
 
