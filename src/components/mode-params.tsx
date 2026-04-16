@@ -222,7 +222,21 @@ export function ModeParamsForm({ mode, value, onChange, xsize = 100, ysize = 100
                 passes so you can inspect the surface or vacuum chips before continuing.
               </p>
             </div>
-            <DirSelect name="direction" value={value.direction ?? 'E'} onChange={set} />
+            <div className="space-y-1">
+              <DirSelect name="direction" value={value.direction ?? 'E'} onChange={set} />
+              <p className="text-xs text-muted-foreground">
+                {(() => {
+                  const d = value.direction ?? 'E'
+                  const info: Record<string, string> = {
+                    N: 'Strokes go south→north, stepping left→right. Starts at bottom-left.',
+                    S: 'Strokes go north→south, stepping right→left. Starts at top-right.',
+                    E: 'Strokes go west→east, stepping top→bottom. Starts at top-left.',
+                    W: 'Strokes go east→west, stepping bottom→top. Starts at bottom-right.',
+                  }
+                  return info[d] + ' Direction is chosen for climb milling.'
+                })()}
+              </p>
+            </div>
             <CheckField
               label="Include perimeter pass"
               name="perimeter"
