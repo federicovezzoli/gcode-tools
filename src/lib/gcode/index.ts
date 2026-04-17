@@ -57,6 +57,11 @@ export function generateGcode(mode: Mode, universal: UniversalParams, modeParams
     const rawPasses = p.passes
     const passes = typeof rawPasses === 'number' && Number.isFinite(rawPasses) ? Math.max(1, Math.floor(rawPasses)) : 1
     if (passes > 1) out += `; passes: ${passes}\n`
+    if (p.horizontal_entry) {
+      const bw = typeof p.bit_width === 'number' && p.bit_width > 0 ? p.bit_width : 35
+      const slack = typeof p.entry_slack === 'number' && p.entry_slack >= 0 ? p.entry_slack : 2
+      out += `; horizontal entry: enabled (offset ${(bw / 2 + slack).toFixed(1)} mm outside stock)\n`
+    }
   }
 
   if (mode === 'hog') {
@@ -116,7 +121,9 @@ export function generateGcode(mode: Mode, universal: UniversalParams, modeParams
     const safePasses = typeof rawP === 'number' && Number.isFinite(rawP) ? Math.max(1, Math.floor(rawP)) : 1
     const rawPE = p.pause_every
     const safePauseEvery = typeof rawPE === 'number' && Number.isFinite(rawPE) ? Math.max(0, Math.floor(rawPE)) : 1
-    out += generateSurfacing(p.stepover, p.direction, p.perimeter, safePasses, safePauseEvery, universal)
+    const safeBitWidth = typeof p.bit_width === 'number' && p.bit_width > 0 ? p.bit_width : 35
+    const safeEntrySlack = typeof p.entry_slack === 'number' && p.entry_slack >= 0 ? p.entry_slack : 2
+    out += generateSurfacing(p.stepover, p.direction, p.perimeter, safePasses, safePauseEvery, safeBitWidth, !!p.horizontal_entry, safeEntrySlack, universal)
   }
 
   if (mode === 'hog') {

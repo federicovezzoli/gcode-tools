@@ -74,6 +74,8 @@ export interface SurfacingParams {
   perimeter: boolean
   bit_width: number
   passes: number
+  horizontal_entry: boolean
+  entry_slack: number
 }
 
 export interface HogParams {

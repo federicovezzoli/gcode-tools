@@ -71,6 +71,8 @@ function surfacing(
   rapid: number,
   vertical: number,
   drawspeed: number,
+  horizontalEntry: boolean = false,
+  entryOffset: number = 0,
 ): string {
   let strokestart: number, strokeend: number, rowstart: number, rowend: number, horiz: boolean
 
@@ -111,19 +113,25 @@ function surfacing(
   // stepover is a guideline but we adjust so each row is equally spaced
   const rowstep = (rowend - rowstart) / (nrows - 1)
 
+  // When horizontal_entry is on, plunge this far outside the stock edge before
+  // entering laterally. Sign chosen so we always move away from the stock.
+  const strokeSign = Math.sign(strokeend - strokestart) // +1 or -1
+  const plungeOffset = horizontalEntry && entryOffset > 0 ? -strokeSign * entryOffset : 0
+
   let out = ''
   for (let row = 0; row < nrows; row++) {
     const rowcoord = rowstart + row * rowstep
+    const plungeCoord = strokestart + plungeOffset
     if (horiz) {
       out += `G0 ${zup} F${vertical}\n` // raise to zup
-      out += `G0 X${strokestart} Y${rowcoord.toFixed(3)} F${rapid}\n` // rapid move
+      out += `G0 X${plungeCoord.toFixed(3)} Y${rowcoord.toFixed(3)} F${rapid}\n` // rapid to plunge point (outside stock when horizontal_entry)
       out += `G1 ${zdn} F${vertical}\n` // plunge to zdn
-      out += gen_subdivided_line(strokestart, rowcoord, strokeend, rowcoord, drawspeed)
+      out += gen_subdivided_line(plungeCoord, rowcoord, strokeend, rowcoord, drawspeed)
     } else {
       out += `G0 ${zup} F${vertical}\n` // raise to zup
-      out += `G0 X${rowcoord.toFixed(3)} Y${strokestart} F${rapid}\n` // rapid move
+      out += `G0 X${rowcoord.toFixed(3)} Y${plungeCoord.toFixed(3)} F${rapid}\n` // rapid to plunge point (outside stock when horizontal_entry)
       out += `G1 ${zdn} F${vertical}\n` // plunge to zdn
-      out += gen_subdivided_line(rowcoord, strokestart, rowcoord, strokeend, drawspeed)
+      out += gen_subdivided_line(rowcoord, plungeCoord, rowcoord, strokeend, drawspeed)
     }
   }
   out += `G0 ${zup} F${vertical}\n` // raise to zup
@@ -137,11 +145,16 @@ export function generateSurfacing(
   perimeter: boolean,
   passes: number,
   pauseEvery: number,
+  bitWidth: number,
+  horizontalEntry: boolean,
+  entrySlack: number,
   u: UniversalParams,
 ): string {
   const { pen_d, pen_u, rapid, vertical, drawspeed, xsize, ysize } = u
   const zu = ` Z${pen_u}`
   const dir = direction.toUpperCase()
+  // entryOffset = half the bit diameter + slack, so the bit center clears the stock edge
+  const entryOffset = horizontalEntry ? bitWidth / 2 + entrySlack : 0
   let out = ''
 
   if (passes <= 1) {
@@ -161,6 +174,8 @@ export function generateSurfacing(
           rapid,
           vertical,
           drawspeed,
+          horizontalEntry,
+          entryOffset,
         )
       } else {
         out += surfacing(
@@ -175,10 +190,12 @@ export function generateSurfacing(
           rapid,
           vertical,
           drawspeed,
+          horizontalEntry,
+          entryOffset,
         )
       }
     } else {
-      out += surfacing(0, 0, xsize, ysize, stepover, dir, zu, zd, rapid, vertical, drawspeed)
+      out += surfacing(0, 0, xsize, ysize, stepover, dir, zu, zd, rapid, vertical, drawspeed, horizontalEntry, entryOffset)
     }
   } else {
     for (let pass = 1; pass <= passes; pass++) {
@@ -202,6 +219,8 @@ export function generateSurfacing(
             rapid,
             vertical,
             drawspeed,
+            horizontalEntry,
+            entryOffset,
           )
         } else {
           out += surfacing(
@@ -216,10 +235,12 @@ export function generateSurfacing(
             rapid,
             vertical,
             drawspeed,
+            horizontalEntry,
+            entryOffset,
           )
         }
       } else {
-        out += surfacing(0, 0, xsize, ysize, stepover, dir, zu, zd, rapid, vertical, drawspeed)
+        out += surfacing(0, 0, xsize, ysize, stepover, dir, zu, zd, rapid, vertical, drawspeed, horizontalEntry, entryOffset)
       }
 
       // Pause after this pass if requested and it's not the last pass.

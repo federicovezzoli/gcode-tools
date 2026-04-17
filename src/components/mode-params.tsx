@@ -177,6 +177,27 @@ export function ModeParamsForm({ mode, value, onChange, xsize = 100, ysize = 100
         {mode === 'surfacing' && (
           <>
             <NumField label="Bit Width" name="bit_width" value={value.bit_width ?? 35} unit="mm" onChange={set} />
+            <CheckField
+              label="Horizontal entry (flattening bit)"
+              name="horizontal_entry"
+              value={value.horizontal_entry ?? false}
+              onChange={set}
+            />
+            {(value.horizontal_entry ?? false) && (
+              <div className="space-y-1 pl-4 border-l-2 border-muted">
+                <NumField
+                  label="Entry slack"
+                  name="entry_slack"
+                  value={value.entry_slack ?? 2}
+                  unit="mm"
+                  min={0}
+                  onChange={(k, v) => set(k, Math.max(0, v))}
+                />
+                <p className="text-xs text-muted-foreground">
+                  {`Bit plunges ${((value.bit_width ?? 35) / 2 + (value.entry_slack ?? 2)).toFixed(1)} mm outside the stock edge (bit radius + slack), then enters horizontally.`}
+                </p>
+              </div>
+            )}
             <div className="space-y-1">
               <NumField
                 label="Stepover"
