@@ -117,19 +117,22 @@ function surfacing(
   // entering laterally. Sign chosen so we always move away from the stock.
   const strokeSign = Math.sign(strokeend - strokestart) // +1 or -1
   const plungeOffset = horizontalEntry && entryOffset > 0 ? -strokeSign * entryOffset : 0
+  const plungeCoord = strokestart + plungeOffset
+  // Preserve the original integer formatting for the stroke-start coord when
+  // there is no offset, so existing fixture output is unchanged.
+  const fmtPlunge = (n: number) => (plungeOffset === 0 ? `${n}` : n.toFixed(3))
 
   let out = ''
   for (let row = 0; row < nrows; row++) {
     const rowcoord = rowstart + row * rowstep
-    const plungeCoord = strokestart + plungeOffset
     if (horiz) {
       out += `G0 ${zup} F${vertical}\n` // raise to zup
-      out += `G0 X${plungeCoord.toFixed(3)} Y${rowcoord.toFixed(3)} F${rapid}\n` // rapid to plunge point (outside stock when horizontal_entry)
+      out += `G0 X${fmtPlunge(plungeCoord)} Y${rowcoord.toFixed(3)} F${rapid}\n` // rapid to plunge point (outside stock when horizontal_entry)
       out += `G1 ${zdn} F${vertical}\n` // plunge to zdn
       out += gen_subdivided_line(plungeCoord, rowcoord, strokeend, rowcoord, drawspeed)
     } else {
       out += `G0 ${zup} F${vertical}\n` // raise to zup
-      out += `G0 X${rowcoord.toFixed(3)} Y${plungeCoord.toFixed(3)} F${rapid}\n` // rapid to plunge point (outside stock when horizontal_entry)
+      out += `G0 X${rowcoord.toFixed(3)} Y${fmtPlunge(plungeCoord)} F${rapid}\n` // rapid to plunge point (outside stock when horizontal_entry)
       out += `G1 ${zdn} F${vertical}\n` // plunge to zdn
       out += gen_subdivided_line(rowcoord, plungeCoord, rowcoord, strokeend, drawspeed)
     }
@@ -195,7 +198,21 @@ export function generateSurfacing(
         )
       }
     } else {
-      out += surfacing(0, 0, xsize, ysize, stepover, dir, zu, zd, rapid, vertical, drawspeed, horizontalEntry, entryOffset)
+      out += surfacing(
+        0,
+        0,
+        xsize,
+        ysize,
+        stepover,
+        dir,
+        zu,
+        zd,
+        rapid,
+        vertical,
+        drawspeed,
+        horizontalEntry,
+        entryOffset,
+      )
     }
   } else {
     for (let pass = 1; pass <= passes; pass++) {
@@ -240,7 +257,21 @@ export function generateSurfacing(
           )
         }
       } else {
-        out += surfacing(0, 0, xsize, ysize, stepover, dir, zu, zd, rapid, vertical, drawspeed, horizontalEntry, entryOffset)
+        out += surfacing(
+          0,
+          0,
+          xsize,
+          ysize,
+          stepover,
+          dir,
+          zu,
+          zd,
+          rapid,
+          vertical,
+          drawspeed,
+          horizontalEntry,
+          entryOffset,
+        )
       }
 
       // Pause after this pass if requested and it's not the last pass.
