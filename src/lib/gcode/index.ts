@@ -123,7 +123,17 @@ export function generateGcode(mode: Mode, universal: UniversalParams, modeParams
     const safePauseEvery = typeof rawPE === 'number' && Number.isFinite(rawPE) ? Math.max(0, Math.floor(rawPE)) : 1
     const safeBitWidth = typeof p.bit_width === 'number' && p.bit_width > 0 ? p.bit_width : 35
     const safeEntrySlack = typeof p.entry_slack === 'number' && p.entry_slack >= 0 ? p.entry_slack : 2
-    out += generateSurfacing(p.stepover, p.direction, p.perimeter, safePasses, safePauseEvery, safeBitWidth, !!p.horizontal_entry, safeEntrySlack, universal)
+    out += generateSurfacing(
+      p.stepover,
+      p.direction,
+      p.perimeter,
+      safePasses,
+      safePauseEvery,
+      safeBitWidth,
+      !!p.horizontal_entry,
+      safeEntrySlack,
+      universal,
+    )
   }
 
   if (mode === 'hog') {

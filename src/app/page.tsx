@@ -28,12 +28,12 @@ const BASE_UNIVERSAL: UniversalParams = {
 
 // Per-mode feedrate overrides (applied on mode switch)
 const MODE_FEEDRATE_DEFAULTS: Partial<Record<Mode, Partial<UniversalParams>>> = {
-  surfacing: { vertical: 300, drawspeed: 600, pen_u: 10 },  // 5000 µm/s plunge, 10000 µm/s feedrate, 10mm clearance
+  surfacing: { vertical: 300, drawspeed: 600, pen_u: 10 }, // 5000 µm/s plunge, 10000 µm/s feedrate, 10mm clearance
 }
 
 const DEFAULT_UNIVERSAL: UniversalParams = {
   ...BASE_UNIVERSAL,
-  ...(MODE_FEEDRATE_DEFAULTS['surfacing'] ?? {}),  // surfacing is the default mode
+  ...(MODE_FEEDRATE_DEFAULTS['surfacing'] ?? {}), // surfacing is the default mode
 }
 
 const DEFAULT_MODE_PARAMS: Record<string, Record<string, any>> = {
@@ -64,7 +64,7 @@ export default function Home() {
   function handleModeChange(newMode: Mode) {
     setMode(newMode)
     const feedrateDefaults = MODE_FEEDRATE_DEFAULTS[newMode]
-    setUniversal(prev => ({
+    setUniversal((prev) => ({
       ...prev,
       ...(feedrateDefaults ?? { vertical: BASE_UNIVERSAL.vertical, drawspeed: BASE_UNIVERSAL.drawspeed }),
     }))

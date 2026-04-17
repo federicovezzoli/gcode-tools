@@ -1,10 +1,10 @@
 'use client'
 
-import { type Mode, type UniversalParams, type ZeroRef } from '@/lib/gcode'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import type { Mode, UniversalParams, ZeroRef } from '@/lib/gcode'
 
 interface UniversalParamsFormProps {
   value: UniversalParams
@@ -92,8 +92,7 @@ function ZeroRefGrid({ value, onChange }: { value: ZeroRef; onChange: (ref: Zero
 }
 
 export function UniversalParamsForm({ value, onChange, mode }: UniversalParamsFormProps) {
-  const set = (k: keyof UniversalParams, v: number | boolean) =>
-    onChange({ ...value, [k]: v })
+  const set = (k: keyof UniversalParams, v: number | boolean) => onChange({ ...value, [k]: v })
 
   const isSurfacing = mode === 'surfacing'
   const isHog = mode === 'hog'
@@ -130,8 +129,20 @@ export function UniversalParamsForm({ value, onChange, mode }: UniversalParamsFo
         <div>
           <p className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wide">Z Levels</p>
           <div className="grid grid-cols-2 gap-3">
-            <NumField label={isSurfacing || isHog ? 'Cut Depth' : 'Pen Down'} name="pen_d" value={value.pen_d} unit="mm" onChange={set} />
-            <NumField label={isSurfacing || isHog ? 'Clearance' : 'Pen Up'} name="pen_u" value={value.pen_u} unit="mm" onChange={set} />
+            <NumField
+              label={isSurfacing || isHog ? 'Cut Depth' : 'Pen Down'}
+              name="pen_d"
+              value={value.pen_d}
+              unit="mm"
+              onChange={set}
+            />
+            <NumField
+              label={isSurfacing || isHog ? 'Clearance' : 'Pen Up'}
+              name="pen_u"
+              value={value.pen_u}
+              unit="mm"
+              onChange={set}
+            />
           </div>
         </div>
 
@@ -139,10 +150,28 @@ export function UniversalParamsForm({ value, onChange, mode }: UniversalParamsFo
           <p className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wide">Feedrates</p>
           <div className="grid grid-cols-2 gap-3">
             <NumField label="Rapid" name="rapid" value={value.rapid} unit="mm/min" onChange={set} />
-            <NumField label={isSurfacing || isHog ? 'Plunge Rate' : 'Vertical'} name="vertical" value={value.vertical} unit="mm/min" onChange={set} />
-            <NumField label={isSurfacing || isHog ? 'Feedrate' : 'Draw'} name="drawspeed" value={value.drawspeed} unit="mm/min" onChange={set} />
+            <NumField
+              label={isSurfacing || isHog ? 'Plunge Rate' : 'Vertical'}
+              name="vertical"
+              value={value.vertical}
+              unit="mm/min"
+              onChange={set}
+            />
+            <NumField
+              label={isSurfacing || isHog ? 'Feedrate' : 'Draw'}
+              name="drawspeed"
+              value={value.drawspeed}
+              unit="mm/min"
+              onChange={set}
+            />
             {!isSurfacing && (
-              <NumField label={isHog ? 'Slotting Feedrate' : 'Draw (slow)'} name="drawspeed_slow" value={value.drawspeed_slow} unit="mm/min" onChange={set} />
+              <NumField
+                label={isHog ? 'Slotting Feedrate' : 'Draw (slow)'}
+                name="drawspeed_slow"
+                value={value.drawspeed_slow}
+                unit="mm/min"
+                onChange={set}
+              />
             )}
           </div>
         </div>
