@@ -28,7 +28,7 @@ const BASE_UNIVERSAL: UniversalParams = {
 
 // Per-mode feedrate overrides (applied on mode switch)
 const MODE_FEEDRATE_DEFAULTS: Partial<Record<Mode, Partial<UniversalParams>>> = {
-  surfacing: { vertical: 300, drawspeed: 900, pen_d: -1, pen_u: 10 }, // 5000 µm/s plunge, 10000 µm/s feedrate, 10mm clearance
+  surfacing: { vertical: 300, drawspeed: 1000, pen_d: -1, pen_u: 10 }, // 5000 µm/s plunge, 10000 µm/s feedrate, 10mm clearance
 }
 
 const DEFAULT_UNIVERSAL: UniversalParams = {
