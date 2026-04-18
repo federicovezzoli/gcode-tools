@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/federicovezzoli/gcode-tpgen/compare/v1.13.0...v1.14.0) (2026-04-18)
+
+
+### Features
+
+* update surfacing mode feedrate and add dirty state management ([06c7978](https://github.com/federicovezzoli/gcode-tpgen/commit/06c7978ae6d529b74c9c405cc3e83fe9f60815b0))
+
 # [1.13.0](https://github.com/federicovezzoli/gcode-tpgen/compare/v1.12.0...v1.13.0) (2026-04-18)
 
 
