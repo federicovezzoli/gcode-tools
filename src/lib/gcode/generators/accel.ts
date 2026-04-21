@@ -10,10 +10,10 @@ function accel_pre(
   vertical: number,
   drawspeed: number,
 ): string {
-  const xstart = mode === 'accel_x' ? 2 * i : 0
-  const xend = mode === 'accel_x' ? 2 * i : 10
-  const ystart = mode === 'accel_x' ? 0 : 2 * i
-  const yend = mode === 'accel_x' ? 10 : 2 * i
+  const xstart = mode === 'accel-x' ? 2 * i : 0
+  const xend = mode === 'accel-x' ? 2 * i : 10
+  const ystart = mode === 'accel-x' ? 0 : 2 * i
+  const yend = mode === 'accel-x' ? 10 : 2 * i
 
   const xpre = xstart + 5
   const ypre = ystart + 5
@@ -37,10 +37,10 @@ function accel_pre(
 // accel_execute: ramp velocity up then back down across the extent, subdivided into 40 segments
 function accel_execute(mode: string, i: number, extent: number, rapid: number): string {
   const subdiv = 40 // subdivide extent into this many smaller segments
-  const xstart = mode === 'accel_x' ? 2 * i : 10
-  const ystart = mode === 'accel_x' ? 10 : 2 * i
-  const xstep = mode === 'accel_x' ? extent / subdiv : 0
-  const ystep = mode === 'accel_x' ? 0 : extent / subdiv
+  const xstart = mode === 'accel-x' ? 2 * i : 10
+  const ystart = mode === 'accel-x' ? 10 : 2 * i
+  const xstep = mode === 'accel-x' ? extent / subdiv : 0
+  const ystep = mode === 'accel-x' ? 0 : extent / subdiv
 
   let out = ''
   for (let j = 1; j <= subdiv; j++) {
@@ -68,10 +68,10 @@ function accel_post(
   vertical: number,
   drawspeed: number,
 ): string {
-  const xstart = mode === 'accel_x' ? 2 * i : 11
-  const xend = mode === 'accel_x' ? 2 * i : 21
-  const ystart = mode === 'accel_x' ? 11 : 2 * i
-  const yend = mode === 'accel_x' ? 21 : 2 * i
+  const xstart = mode === 'accel-x' ? 2 * i : 11
+  const xend = mode === 'accel-x' ? 2 * i : 21
+  const ystart = mode === 'accel-x' ? 11 : 2 * i
+  const yend = mode === 'accel-x' ? 21 : 2 * i
 
   const xpre = xstart + 5
   const ypre = ystart + 5
@@ -102,7 +102,7 @@ export function generateAccel(
   const { pen_d, pen_u, rapid, vertical, drawspeed, xsize, ysize } = u
   const zu = ` Z${pen_u}`
   const zd = ` Z${pen_d}`
-  const mode = `accel_${axis}` // 'accel_x' or 'accel_y'
+  const mode = `accel-${axis}` // 'accel-x' or 'accel-y'
 
   let out = ''
   out += 'M501\n'

@@ -34,39 +34,39 @@ describe('shape', () => {
 })
 
 describe('z-level', () => {
-  it('ztest_corners', () => expect(generateGcode('ztest_corners', BASE, { zxsize: 14 })).toBe(fixture('ztest_corners')))
-  it('ztest_grid', () => expect(generateGcode('ztest_grid', BASE, { zxsize: 14 })).toBe(fixture('ztest_grid')))
+  it('ztest-corners', () => expect(generateGcode('ztest-corners', BASE, { zxsize: 14 })).toBe(fixture('ztest-corners')))
+  it('ztest-grid', () => expect(generateGcode('ztest-grid', BASE, { zxsize: 14 })).toBe(fixture('ztest-grid')))
 })
 
 describe('dense segments', () => {
   it('default', () => {
     const mp = { dense_minseg: 0.02, dense_maxseg: 0.5, dense_efficient: false, dense_diagonal: false }
-    expect(generateGcode('dense_segments', BASE, mp)).toBe(fixture('dense_segments'))
+    expect(generateGcode('dense-segments', BASE, mp)).toBe(fixture('dense-segments'))
   })
   it('efficient', () => {
     const mp = { dense_minseg: 0.02, dense_maxseg: 0.5, dense_efficient: true, dense_diagonal: false }
-    expect(generateGcode('dense_segments', BASE, mp)).toBe(fixture('dense_segments_efficient'))
+    expect(generateGcode('dense-segments', BASE, mp)).toBe(fixture('dense-segments-efficient'))
   })
   it('diagonal', () => {
     const mp = { dense_minseg: 0.02, dense_maxseg: 0.5, dense_efficient: false, dense_diagonal: true }
-    expect(generateGcode('dense_segments', BASE, mp)).toBe(fixture('dense_segments_diagonal'))
+    expect(generateGcode('dense-segments', BASE, mp)).toBe(fixture('dense-segments-diagonal'))
   })
 })
 
 describe('acceleration', () => {
-  it('accel_x', () => {
-    expect(generateGcode('accel_x', BASE, { accel_low: 100, accel_high: 1000, accel_tests: 10 })).toBe(
-      fixture('accel_x'),
+  it('accel-x', () => {
+    expect(generateGcode('accel-x', BASE, { accel_low: 100, accel_high: 1000, accel_tests: 10 })).toBe(
+      fixture('accel-x'),
     )
   })
-  it('accel_y', () => {
-    expect(generateGcode('accel_y', BASE, { accel_low: 100, accel_high: 1000, accel_tests: 10 })).toBe(
-      fixture('accel_y'),
+  it('accel-y', () => {
+    expect(generateGcode('accel-y', BASE, { accel_low: 100, accel_high: 1000, accel_tests: 10 })).toBe(
+      fixture('accel-y'),
     )
   })
-  it('accel_x single test', () => {
-    expect(generateGcode('accel_x', BASE, { accel_low: 500, accel_high: 500, accel_tests: 1 })).toBe(
-      fixture('accel_x_single'),
+  it('accel-x single test', () => {
+    expect(generateGcode('accel-x', BASE, { accel_low: 500, accel_high: 500, accel_tests: 1 })).toBe(
+      fixture('accel-x-single'),
     )
   })
 })
