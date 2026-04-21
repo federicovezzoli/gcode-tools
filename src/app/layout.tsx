@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'G-Code Patterns Generator',
+  title: 'G-Code Tools',
   description:
     'Free online tool to generate diagnostic G-code test patterns for CNC machines, routers and plotters. Calibrate steps/mm, backlash, acceleration, Z-level, surfacing and more.',
   keywords: [
@@ -30,16 +30,16 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'Federico Vezzoli', url: 'https://federicovezzoli.com' }],
   openGraph: {
-    title: 'G-Code Patterns Generator',
+    title: 'G-Code Tools',
     description:
       'Generate diagnostic G-code test patterns for CNC machines. Rulers, Z-tests, acceleration, surfacing and more — free, in-browser.',
-    url: 'https://federicovezzoli.github.io/gcode-tpgen/',
-    siteName: 'G-Code Patterns Generator',
+    url: 'https://gcode-tools.federicovezzoli.com/',
+    siteName: 'G-Code Tools',
     type: 'website',
   },
   twitter: {
     card: 'summary',
-    title: 'G-Code Patterns Generator',
+    title: 'G-Code Tools',
     description: 'Generate diagnostic G-code test patterns for CNC machines. Free, in-browser.',
   },
 }

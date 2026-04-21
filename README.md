@@ -1,4 +1,4 @@
-# G-Code Test Pattern Generator
+# G-Code Tools
 
 A modern web app for generating diagnostic G-code patterns to calibrate and test CNC machines, routers, and plotters.
 
