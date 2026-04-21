@@ -95,7 +95,7 @@ export default function Home() {
       <header className="border-b">
         <div className="container mx-auto px-4 py-4 max-w-5xl flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold tracking-tight">G-Code Patterns Generator</h1>
+            <h1 className="text-xl font-bold tracking-tight">G-Code Tools</h1>
             <p className="text-sm text-muted-foreground mt-0.5">
               Generate diagnostic G-code patterns & more for CNC machines
             </p>
