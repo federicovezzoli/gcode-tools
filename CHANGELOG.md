@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/federicovezzoli/gcode-tools/compare/v1.15.0...v1.16.0) (2026-04-22)
+
+
+### Features
+
+* add header and footer to main layout with navigation and theme toggle ([cd33585](https://github.com/federicovezzoli/gcode-tools/commit/cd33585e4f72ed6a360aaadae5b9ce67e06293f8))
+
 # [1.15.0](https://github.com/federicovezzoli/gcode-tools/compare/v1.14.1...v1.15.0) (2026-04-21)
 
 
