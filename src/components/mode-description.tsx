@@ -222,7 +222,7 @@ const MODE_TITLES: Record<Mode, string> = {
   'dense-segments': 'Dense Segments',
   'accel-x': 'Acceleration Test',
   'accel-y': 'Acceleration Test',
-  surfacing: 'Spoil Board Surfacing',
+  surfacing: 'Board Surfacing',
   hog: 'Hog-Out Optimization',
 }
 

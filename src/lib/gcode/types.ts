@@ -65,7 +65,8 @@ export interface AccelParams {
 
 export interface SurfacingParams {
   stepover: number
-  direction: Direction
+  pass_axis: 'X' | 'Y'
+  climb: boolean
   perimeter: boolean
   bit_width: number
   passes: number

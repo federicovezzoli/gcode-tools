@@ -72,26 +72,26 @@ describe('acceleration', () => {
 })
 
 describe('surfacing', () => {
-  it('E no perimeter', () =>
-    expect(generateGcode('surfacing', BASE, { stepover: 12, direction: 'E', perimeter: false })).toBe(
+  it('X climb no perimeter', () =>
+    expect(generateGcode('surfacing', BASE, { stepover: 12, pass_axis: 'X', climb: true, perimeter: false })).toBe(
       fixture('surfacing_E'),
     ))
-  it('N no perimeter', () =>
-    expect(generateGcode('surfacing', BASE, { stepover: 12, direction: 'N', perimeter: false })).toBe(
+  it('Y climb no perimeter', () =>
+    expect(generateGcode('surfacing', BASE, { stepover: 12, pass_axis: 'Y', climb: true, perimeter: false })).toBe(
       fixture('surfacing_N'),
     ))
-  it('W no perimeter', () =>
-    expect(generateGcode('surfacing', BASE, { stepover: 12, direction: 'W', perimeter: false })).toBe(
+  it('X conventional no perimeter', () =>
+    expect(generateGcode('surfacing', BASE, { stepover: 12, pass_axis: 'X', climb: false, perimeter: false })).toBe(
       fixture('surfacing_W'),
     ))
-  it('E with perimeter', () =>
-    expect(generateGcode('surfacing', BASE, { stepover: 12, direction: 'E', perimeter: true })).toBe(
+  it('X climb with perimeter', () =>
+    expect(generateGcode('surfacing', BASE, { stepover: 12, pass_axis: 'X', climb: true, perimeter: true })).toBe(
       fixture('surfacing_perim'),
     ))
   it('3-pass multipass', () =>
-    expect(generateGcode('surfacing', BASE, { stepover: 12, direction: 'E', perimeter: false, passes: 3 })).toBe(
-      fixture('surfacing_multipass'),
-    ))
+    expect(
+      generateGcode('surfacing', BASE, { stepover: 12, pass_axis: 'X', climb: true, perimeter: false, passes: 3 }),
+    ).toBe(fixture('surfacing_multipass')))
 })
 
 // Extract X,Y from all "G0 Xnnn Ynnn F{rapid}" rapid-move lines, excluding the
@@ -112,58 +112,58 @@ describe('surfacing – horizontal entry', () => {
   const ENTRY_OFFSET = 35 / 2 + 2
   const MP = { stepover: 12, bit_width: 35, entry_slack: 2, perimeter: false, horizontal_entry: true }
 
-  it('E: every stroke plunges left of X=0 by entry_offset', () => {
-    const gcode = generateGcode('surfacing', BASE, { ...MP, direction: 'E' })
+  it('X climb: every stroke plunges left of X=0 by entry_offset', () => {
+    const gcode = generateGcode('surfacing', BASE, { ...MP, pass_axis: 'X', climb: true })
     const rapids = plungeRapids(gcode, BASE.rapid)
     expect(rapids.length).toBeGreaterThan(0)
     for (const { x } of rapids) expect(x).toBeCloseTo(-ENTRY_OFFSET, 3)
   })
 
-  it('W: every stroke plunges right of X=xmax by entry_offset', () => {
-    const gcode = generateGcode('surfacing', BASE, { ...MP, direction: 'W' })
+  it('X conventional: every stroke plunges left of X=0 by entry_offset', () => {
+    const gcode = generateGcode('surfacing', BASE, { ...MP, pass_axis: 'X', climb: false })
     const rapids = plungeRapids(gcode, BASE.rapid)
     expect(rapids.length).toBeGreaterThan(0)
-    for (const { x } of rapids) expect(x).toBeCloseTo(BASE.xsize + ENTRY_OFFSET, 3)
+    for (const { x } of rapids) expect(x).toBeCloseTo(-ENTRY_OFFSET, 3)
   })
 
-  it('N: every stroke plunges below Y=0 by entry_offset', () => {
-    const gcode = generateGcode('surfacing', BASE, { ...MP, direction: 'N' })
+  it('Y climb: every stroke plunges below Y=0 by entry_offset', () => {
+    const gcode = generateGcode('surfacing', BASE, { ...MP, pass_axis: 'Y', climb: true })
     const rapids = plungeRapids(gcode, BASE.rapid)
     expect(rapids.length).toBeGreaterThan(0)
     for (const { y } of rapids) expect(y).toBeCloseTo(-ENTRY_OFFSET, 3)
   })
 
-  it('S: every stroke plunges above Y=ymax by entry_offset', () => {
-    const gcode = generateGcode('surfacing', BASE, { ...MP, direction: 'S' })
+  it('Y conventional: every stroke plunges below Y=0 by entry_offset', () => {
+    const gcode = generateGcode('surfacing', BASE, { ...MP, pass_axis: 'Y', climb: false })
     const rapids = plungeRapids(gcode, BASE.rapid)
     expect(rapids.length).toBeGreaterThan(0)
-    for (const { y } of rapids) expect(y).toBeCloseTo(BASE.ysize + ENTRY_OFFSET, 3)
+    for (const { y } of rapids) expect(y).toBeCloseTo(-ENTRY_OFFSET, 3)
   })
 
   it('entry_slack=0 → offset equals exactly bit radius', () => {
-    const gcode = generateGcode('surfacing', BASE, { ...MP, direction: 'E', entry_slack: 0 })
+    const gcode = generateGcode('surfacing', BASE, { ...MP, pass_axis: 'X', climb: true, entry_slack: 0 })
     const rapids = plungeRapids(gcode, BASE.rapid)
     for (const { x } of rapids) expect(x).toBeCloseTo(-(35 / 2), 3)
   })
 
   it('disabled → output is identical to baseline (no change to existing behavior)', () => {
-    const withEntry = generateGcode('surfacing', BASE, { ...MP, direction: 'E', horizontal_entry: false })
-    const baseline = generateGcode('surfacing', BASE, { stepover: 12, direction: 'E', perimeter: false })
+    const withEntry = generateGcode('surfacing', BASE, { ...MP, pass_axis: 'X', climb: true, horizontal_entry: false })
+    const baseline = generateGcode('surfacing', BASE, { stepover: 12, pass_axis: 'X', climb: true, perimeter: false })
     expect(withEntry).toBe(baseline)
   })
 
   it('header comment shows entry offset when enabled', () => {
-    const gcode = generateGcode('surfacing', BASE, { ...MP, direction: 'E' })
+    const gcode = generateGcode('surfacing', BASE, { ...MP, pass_axis: 'X', climb: true })
     expect(gcode).toContain('; horizontal entry: enabled (offset 19.5 mm outside stock)')
   })
 
   it('header comment absent when disabled', () => {
-    const gcode = generateGcode('surfacing', BASE, { ...MP, direction: 'E', horizontal_entry: false })
+    const gcode = generateGcode('surfacing', BASE, { ...MP, pass_axis: 'X', climb: true, horizontal_entry: false })
     expect(gcode).not.toContain('; horizontal entry:')
   })
 
-  it('strokes still reach the far stock edge (E: last G1 per row ends at X=xmax)', () => {
-    const gcode = generateGcode('surfacing', BASE, { ...MP, direction: 'E' })
+  it('strokes still reach the far stock edge (X climb: last G1 per row ends at X=xmax)', () => {
+    const gcode = generateGcode('surfacing', BASE, { ...MP, pass_axis: 'X', climb: true })
     // collect all G1 X... Y... lines (cutting moves), group by Y row, last X per row = xmax
     const re = /^G1 X([\d.]+) Y([\d.]+) F\d+$/
     const cuts = gcode.split('\n').flatMap((line) => {

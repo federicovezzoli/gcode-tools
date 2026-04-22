@@ -7,7 +7,8 @@
 ; x extent: 100
 ; y extent: 100
 ; stepover: 12 mm
-; direction: E
+; pass axis: X
+; climb: true
 ; perimeter: false
 G0  Z0.5 F800
 G0 X0 Y100.000 F2000

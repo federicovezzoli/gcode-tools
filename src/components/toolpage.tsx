@@ -40,7 +40,7 @@ const DEFAULT_MODE_PARAMS: Record<string, Record<string, any>> = {
   'dense-segments': { dense_minseg: 0.02, dense_maxseg: 0.5, dense_efficient: false, dense_diagonal: false },
   'accel-x': { accel_low: 100, accel_high: 1000, accel_tests: 10 },
   'accel-y': { accel_low: 100, accel_high: 1000, accel_tests: 10 },
-  surfacing: { stepover: 27, direction: 'E', perimeter: false, bit_width: 35, passes: 1 },
+  surfacing: { stepover: 27, pass_axis: 'X', climb: true, perimeter: false, bit_width: 35, passes: 1 },
   hog: { orientation: 'X', hog_count: 1, hog_offset: 10, final_feedrate: 1000, final_stepover: 3 },
 }
 

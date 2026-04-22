@@ -1,4 +1,4 @@
-import type { Direction, UniversalParams } from '../types'
+import type { UniversalParams } from '../types'
 
 // gen_subdivided_line: subdivide a line into segments of ~1/5 second at drawspeed
 function gen_subdivided_line(x0: number, y0: number, x1: number, y1: number, drawspeed: number): string {
@@ -65,7 +65,8 @@ function surfacing(
   xmax: number,
   ymax: number,
   stepover: number,
-  direction: string,
+  axis: 'X' | 'Y',
+  climb: boolean,
   zup: string,
   zdn: string,
   rapid: number,
@@ -76,36 +77,22 @@ function surfacing(
 ): string {
   let strokestart: number, strokeend: number, rowstart: number, rowend: number, horiz: boolean
 
-  // orient so that we're always climb milling
-  if (direction === 'E') {
-    // left to right, top to bottom
+  if (axis === 'X') {
+    // strokes always go left→right
     strokestart = xmin
     strokeend = xmax
-    rowstart = ymax
-    rowend = ymin
     horiz = true
-  } else if (direction === 'W') {
-    // right to left, bottom to top
-    strokestart = xmax
-    strokeend = xmin
-    rowstart = ymin
-    rowend = ymax
-    horiz = true
-  } else if (direction === 'N') {
-    // bottom to top, left to right
+    // climb: step top→bottom; conventional: step bottom→top
+    rowstart = climb ? ymax : ymin
+    rowend = climb ? ymin : ymax
+  } else {
+    // strokes always go bottom→top
     strokestart = ymin
     strokeend = ymax
-    rowstart = xmin
-    rowend = xmax
     horiz = false
-  } else {
-    // 'S'
-    // top to bottom, right to left
-    strokestart = ymax
-    strokeend = ymin
-    rowstart = xmax
-    rowend = xmin
-    horiz = false
+    // climb: step left→right; conventional: step right→left
+    rowstart = climb ? xmin : xmax
+    rowend = climb ? xmax : xmin
   }
 
   if (stepover <= 0) return ''
@@ -144,7 +131,8 @@ function surfacing(
 
 export function generateSurfacing(
   stepover: number,
-  direction: Direction,
+  axis: 'X' | 'Y',
+  climb: boolean,
   perimeter: boolean,
   passes: number,
   pauseEvery: number,
@@ -155,7 +143,6 @@ export function generateSurfacing(
 ): string {
   const { pen_d, pen_u, rapid, vertical, drawspeed, xsize, ysize } = u
   const zu = ` Z${pen_u}`
-  const dir = direction.toUpperCase()
   // entryOffset = half the bit diameter + slack, so the bit center clears the stock edge
   const entryOffset = horizontalEntry ? bitWidth / 2 + entrySlack : 0
   let out = ''
@@ -163,15 +150,16 @@ export function generateSurfacing(
   if (passes <= 1) {
     const zd = ` Z${pen_d}`
     if (perimeter) {
-      out += surfacing_perim(xsize, ysize, stepover, dir, zu, zd, rapid, vertical, drawspeed)
-      if (dir === 'E' || dir === 'W') {
+      out += surfacing_perim(xsize, ysize, stepover, axis, zu, zd, rapid, vertical, drawspeed)
+      if (axis === 'X') {
         out += surfacing(
           0,
           2 * stepover,
           xsize,
           ysize - 2 * stepover,
           stepover,
-          dir,
+          axis,
+          climb,
           zu,
           zd,
           rapid,
@@ -187,7 +175,8 @@ export function generateSurfacing(
           xsize - 2 * stepover,
           ysize,
           stepover,
-          dir,
+          axis,
+          climb,
           zu,
           zd,
           rapid,
@@ -204,7 +193,8 @@ export function generateSurfacing(
         xsize,
         ysize,
         stepover,
-        dir,
+        axis,
+        climb,
         zu,
         zd,
         rapid,
@@ -222,15 +212,16 @@ export function generateSurfacing(
       out += `; --- Pass ${pass} of ${passes} ---\n`
 
       if (perimeter) {
-        out += surfacing_perim(xsize, ysize, stepover, dir, zu, zd, rapid, vertical, drawspeed)
-        if (dir === 'E' || dir === 'W') {
+        out += surfacing_perim(xsize, ysize, stepover, axis, zu, zd, rapid, vertical, drawspeed)
+        if (axis === 'X') {
           out += surfacing(
             0,
             2 * stepover,
             xsize,
             ysize - 2 * stepover,
             stepover,
-            dir,
+            axis,
+            climb,
             zu,
             zd,
             rapid,
@@ -246,7 +237,8 @@ export function generateSurfacing(
             xsize - 2 * stepover,
             ysize,
             stepover,
-            dir,
+            axis,
+            climb,
             zu,
             zd,
             rapid,
@@ -263,7 +255,8 @@ export function generateSurfacing(
           xsize,
           ysize,
           stepover,
-          dir,
+          axis,
+          climb,
           zu,
           zd,
           rapid,

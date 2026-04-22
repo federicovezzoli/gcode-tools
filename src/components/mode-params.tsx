@@ -198,8 +198,7 @@ export function ModeParamsForm({ mode, value, onChange, xsize = 100, ysize = 100
                 const so = value.stepover ?? 20
                 if (bw <= 0 || so <= 0)
                   return <p className="text-xs text-destructive">Bit width and stepover must be &gt; 0</p>
-                const dir = value.direction ?? 'E'
-                const extent = dir === 'N' || dir === 'S' ? ysize : xsize
+                const extent = (value.pass_axis ?? 'X') === 'Y' ? ysize : xsize
                 const nrows = Math.ceil(extent / so) + 1
                 const rowstep = nrows > 1 ? extent / (nrows - 1) : extent
                 if (rowstep > bw)
@@ -246,18 +245,40 @@ export function ModeParamsForm({ mode, value, onChange, xsize = 100, ysize = 100
               </div>
             )}
             <div className="space-y-1">
-              <DirSelect name="direction" value={value.direction ?? 'E'} onChange={set} />
+              <Label className="text-xs">Pass Axis</Label>
+              <Select value={value.pass_axis ?? 'X'} onValueChange={(v) => set('pass_axis', v)}>
+                <SelectTrigger className="h-8 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="X">Horizontal (X)</SelectItem>
+                  <SelectItem value="Y">Vertical (Y)</SelectItem>
+                </SelectContent>
+              </Select>
               <p className="text-xs text-muted-foreground">
-                {(() => {
-                  const d = value.direction ?? 'E'
-                  const info: Record<string, string> = {
-                    N: 'Strokes go south→north, stepping left→right. Starts at bottom-left.',
-                    S: 'Strokes go north→south, stepping right→left. Starts at top-right.',
-                    E: 'Strokes go west→east, stepping top→bottom. Starts at top-left.',
-                    W: 'Strokes go east→west, stepping bottom→top. Starts at bottom-right.',
-                  }
-                  return `${info[d]} Direction is chosen for climb milling.`
-                })()}
+                {(value.pass_axis ?? 'X') === 'X'
+                  ? 'Strokes run left→right, stepping across Y.'
+                  : 'Strokes run bottom→top, stepping across X.'}
+              </p>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Milling Type</Label>
+              <Select
+                value={(value.climb ?? true) ? 'climb' : 'conventional'}
+                onValueChange={(v) => set('climb', v === 'climb')}
+              >
+                <SelectTrigger className="h-8 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="climb">Climb</SelectItem>
+                  <SelectItem value="conventional">Conventional</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                {(value.climb ?? true)
+                  ? 'Climb milling: cutter rotation and feed direction align. Better surface finish; requires rigid setup.'
+                  : 'Conventional milling: cutter rotation opposes feed direction. Safer on less rigid machines.'}
               </p>
             </div>
             <CheckField

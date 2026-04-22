@@ -51,7 +51,8 @@ export function generateGcode(mode: Mode, universal: UniversalParams, modeParams
 
   if (mode === 'surfacing') {
     out += `; stepover: ${p.stepover} mm\n`
-    out += `; direction: ${p.direction}\n`
+    out += `; pass axis: ${p.pass_axis}\n`
+    out += `; climb: ${p.climb}\n`
     out += `; perimeter: ${p.perimeter}\n`
     const rawPasses = p.passes
     const passes = typeof rawPasses === 'number' && Number.isFinite(rawPasses) ? Math.max(1, Math.floor(rawPasses)) : 1
@@ -120,7 +121,8 @@ export function generateGcode(mode: Mode, universal: UniversalParams, modeParams
     const safeEntrySlack = typeof p.entry_slack === 'number' && p.entry_slack >= 0 ? p.entry_slack : 2
     out += generateSurfacing(
       p.stepover,
-      p.direction,
+      p.pass_axis ?? 'X',
+      p.climb ?? true,
       p.perimeter,
       safePasses,
       safePauseEvery,

@@ -60,7 +60,7 @@ export const MODES: { value: Mode; label: string; group: string; description: st
     value: 'surfacing',
     label: 'Surfacing',
     group: 'Milling',
-    description: 'Unidirectional surfacing passes to flatten a spoil board or face a workpiece.',
+    description: 'Unidirectional surfacing passes to flatten a spoil board or a workpiece.',
   },
   {
     value: 'hog',
@@ -121,7 +121,7 @@ export const GROUPS: Record<string, { description: string; accent: string; text:
     text: 'text-pink-600 dark:text-pink-400',
   },
   Milling: {
-    description: 'Spoil board surfacing passes and feedrate-vs-deflection hog-out tests for real cuts.',
+    description: 'Board surfacing and feedrate-vs-deflection hog-out tests for real cuts.',
     accent: 'border-yellow-500',
     text: 'text-yellow-600 dark:text-yellow-400',
   },
