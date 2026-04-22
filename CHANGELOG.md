@@ -1,3 +1,11 @@
+# [1.15.0](https://github.com/federicovezzoli/gcode-tools/compare/v1.14.1...v1.15.0) (2026-04-21)
+
+
+### Features
+
+* add mode validation and handle not found cases in page component ([e39b467](https://github.com/federicovezzoli/gcode-tools/commit/e39b4676cc8bf91a40bf47abf75a04a98c79d791))
+* basic routing by mode and homepage ([2527d87](https://github.com/federicovezzoli/gcode-tools/commit/2527d87a9c3401f5196e0802cad0dc9baa2997e4))
+
 ## [1.14.1](https://github.com/federicovezzoli/gcode-tpgen/compare/v1.14.0...v1.14.1) (2026-04-18)
 
 

@@ -1,132 +1,43 @@
-'use client'
-
-import { useState } from 'react'
-import { GcodeOutput } from '@/components/gcode-output'
-import { ModeDescription } from '@/components/mode-description'
-import { ModeParamsForm } from '@/components/mode-params'
-import { ModeSelector } from '@/components/mode-selector'
-import { ToolpathPreview } from '@/components/toolpath-preview'
-import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { UniversalParamsForm } from '@/components/universal-params'
-import { generateGcode, getFilename, type Mode, type UniversalParams } from '@/lib/gcode'
-
-// Base feedrate defaults for drawing/diagnostic modes
-const BASE_UNIVERSAL: UniversalParams = {
-  zero: false,
-  zero_ref: 'bottom-left',
-  pen_d: -0.5,
-  pen_u: 0.5,
-  rapid: 2000,
-  vertical: 800,
-  drawspeed: 1000,
-  drawspeed_slow: 200,
-  xsize: 100,
-  ysize: 100,
-}
-
-// Per-mode feedrate overrides (applied on mode switch)
-const MODE_FEEDRATE_DEFAULTS: Partial<Record<Mode, Partial<UniversalParams>>> = {
-  surfacing: { vertical: 300, drawspeed: 1000, pen_d: -1, pen_u: 10 }, // 5000 µm/s plunge, 10000 µm/s feedrate, 10mm clearance
-}
-
-const DEFAULT_UNIVERSAL: UniversalParams = {
-  ...BASE_UNIVERSAL,
-  ...(MODE_FEEDRATE_DEFAULTS.surfacing ?? {}), // surfacing is the default mode
-}
-
-const DEFAULT_MODE_PARAMS: Record<string, Record<string, any>> = {
-  x: {},
-  y: {},
-  xy: {},
-  perim: { direction: 'E' },
-  squareness: { direction: 'E' },
-  ztest_corners: { zxsize: 14 },
-  ztest_grid: { zxsize: 14 },
-  dense_segments: { dense_minseg: 0.02, dense_maxseg: 0.5, dense_efficient: false, dense_diagonal: false },
-  accel_x: { accel_low: 100, accel_high: 1000, accel_tests: 10 },
-  accel_y: { accel_low: 100, accel_high: 1000, accel_tests: 10 },
-  text: { text_input: '' },
-  surfacing: { stepover: 27, direction: 'E', perimeter: false, bit_width: 35, passes: 1 },
-  hog: { orientation: 'X', hog_count: 1, hog_offset: 10, final_feedrate: 1000, final_stepover: 3 },
-}
+import Link from 'next/link'
+import { GROUPS, MODES } from '@/lib/modes'
+import { cn } from '@/lib/utils'
 
 export default function Home() {
-  const [mode, setMode] = useState<Mode>('surfacing')
-  const [universal, setUniversal] = useState<UniversalParams>(DEFAULT_UNIVERSAL)
-  const [modeParamsMap, setModeParamsMap] = useState(DEFAULT_MODE_PARAMS)
-  const [gcode, setGcode] = useState('')
-  const [filename, setFilename] = useState('')
-  const [isDirty, setIsDirty] = useState(false)
-
-  const modeParams = modeParamsMap[mode] ?? {}
-
-  function handleModeChange(newMode: Mode) {
-    setMode(newMode)
-    const feedrateDefaults = MODE_FEEDRATE_DEFAULTS[newMode]
-    setUniversal((prev) => ({
-      ...prev,
-      ...(feedrateDefaults ?? { vertical: BASE_UNIVERSAL.vertical, drawspeed: BASE_UNIVERSAL.drawspeed }),
-    }))
-    setIsDirty(true)
-  }
-
-  function handleUniversalChange(params: UniversalParams) {
-    setUniversal(params)
-    setIsDirty(true)
-  }
-
-  function handleModeParamsChange(params: Record<string, any>) {
-    setModeParamsMap((prev) => ({ ...prev, [mode]: params }))
-    setIsDirty(true)
-  }
-
-  function handleGenerate() {
-    const code = generateGcode(mode, universal, modeParams as any)
-    const fname = getFilename(mode, universal, modeParams)
-    setGcode(code)
-    setFilename(fname)
-    setIsDirty(false)
-  }
-
   return (
-    <main className="container mx-auto px-4 py-6 max-w-5xl space-y-4">
-        {/* 1. Mode selector — full width */}
-        <ModeSelector value={mode} onChange={handleModeChange} />
+    <main className="container mx-auto px-4 py-10 max-w-5xl space-y-8">
+      <div className="max-w-xl space-y-2">
+        <h2 className="text-2xl font-bold tracking-tight">Choose a mode</h2>
+        <p className="text-muted-foreground">
+          Each mode generates a specific G-code test pattern. Select one to configure and download.
+        </p>
+      </div>
 
-        {/* 2. Mode description */}
-        <ModeDescription mode={mode} />
-
-        {/* 3. Parameters — two columns on md+ */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <UniversalParamsForm value={universal} onChange={handleUniversalChange} mode={mode} />
-          <ModeParamsForm
-            mode={mode}
-            value={modeParams}
-            onChange={handleModeParamsChange}
-            xsize={universal.xsize}
-            ysize={universal.ysize}
-          />
-        </div>
-
-        {/* 4. Generate button */}
-        <Button onClick={handleGenerate} className="w-full" size="lg">
-          Generate G-Code
-        </Button>
-
-        {/* 5. Output */}
-        <Tabs defaultValue="preview">
-          <TabsList>
-            <TabsTrigger value="preview">Preview</TabsTrigger>
-            <TabsTrigger value="gcode">G-Code</TabsTrigger>
-          </TabsList>
-          <TabsContent value="preview" className="mt-3">
-            <ToolpathPreview gcode={isDirty ? '' : gcode} mode={mode} modeParams={modeParams} universal={universal} />
-          </TabsContent>
-          <TabsContent value="gcode" className="mt-3">
-            <GcodeOutput gcode={gcode} filename={filename} />
-          </TabsContent>
-        </Tabs>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {MODES.map((mode) => {
+          const group = GROUPS[mode.group]
+          return (
+            <Link
+              key={mode.value}
+              href={`/${mode.value}`}
+              className="rounded-lg border bg-card p-4 space-y-2 hover:shadow-sm transition-shadow"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <span className="font-semibold text-sm leading-snug">{mode.label}</span>
+                <span
+                  className={cn(
+                    'text-xs font-medium shrink-0 mt-0.5 px-1.5 py-0.5 rounded-full border',
+                    group.text,
+                    group.accent,
+                  )}
+                >
+                  {mode.group}
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">{mode.description}</p>
+            </Link>
+          )
+        })}
+      </div>
     </main>
   )
 }

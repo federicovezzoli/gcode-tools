@@ -111,11 +111,11 @@ export function ModeParamsForm({ mode, value, onChange, xsize = 100, ysize = 100
           <DirSelect name="direction" value={value.direction ?? 'E'} onChange={set} />
         )}
 
-        {(mode === 'ztest_corners' || mode === 'ztest_grid') && (
+        {(mode === 'ztest-corners' || mode === 'ztest-grid') && (
           <NumField label="Mark Size" name="zxsize" value={value.zxsize ?? 14} unit="mm" onChange={set} />
         )}
 
-        {mode === 'dense_segments' && (
+        {mode === 'dense-segments' && (
           <>
             <div className="grid grid-cols-2 gap-3">
               <NumField
@@ -148,7 +148,7 @@ export function ModeParamsForm({ mode, value, onChange, xsize = 100, ysize = 100
           </>
         )}
 
-        {(mode === 'accel_x' || mode === 'accel_y') && (
+        {(mode === 'accel-x' || mode === 'accel-y') && (
           <div className="grid grid-cols-2 gap-3">
             <NumField label="Low Accel" name="accel_low" value={value.accel_low ?? 100} unit="mm/s²" onChange={set} />
             <NumField

@@ -33,18 +33,18 @@ export function generateGcode(mode: Mode, universal: UniversalParams, modeParams
     out += `; cutting feedrate: ${drawspeed} mm/min\n`
   }
 
-  if (mode === 'ztest_corners' || mode === 'ztest_grid') {
+  if (mode === 'ztest-corners' || mode === 'ztest-grid') {
     out += `; zxsize: ${p.zxsize}\n`
   }
 
-  if (mode === 'dense_segments') {
+  if (mode === 'dense-segments') {
     out += `; dense_minseg: ${p.dense_minseg}\n`
     out += `; dense_maxseg: ${p.dense_maxseg}\n`
     out += `; dense_efficient: ${p.dense_efficient}\n`
     out += `; dense_diagonal: ${p.dense_diagonal}\n`
   }
 
-  if (mode === 'accel_x' || mode === 'accel_y') {
+  if (mode === 'accel-x' || mode === 'accel-y') {
     out += `; number of accel tests: ${p.accel_tests}\n`
     out += `; high acceleration: ${p.accel_high} mm/s^2\n`
     out += `; low acceleration: ${p.accel_low} mm/s^2\n`
@@ -92,23 +92,23 @@ export function generateGcode(mode: Mode, universal: UniversalParams, modeParams
     out += generateSquareness(universal)
   }
 
-  if (mode === 'ztest_corners') {
+  if (mode === 'ztest-corners') {
     out += generateZTestCorners(p.zxsize, universal)
   }
 
-  if (mode === 'ztest_grid') {
+  if (mode === 'ztest-grid') {
     out += generateZTestGrid(p.zxsize, universal)
   }
 
-  if (mode === 'dense_segments') {
+  if (mode === 'dense-segments') {
     out += generateDenseSegments(p.dense_minseg, p.dense_maxseg, p.dense_efficient, p.dense_diagonal, universal)
   }
 
-  if (mode === 'accel_x') {
+  if (mode === 'accel-x') {
     out += generateAccel('x', p.accel_low, p.accel_high, p.accel_tests, universal)
   }
 
-  if (mode === 'accel_y') {
+  if (mode === 'accel-y') {
     out += generateAccel('y', p.accel_low, p.accel_high, p.accel_tests, universal)
   }
 

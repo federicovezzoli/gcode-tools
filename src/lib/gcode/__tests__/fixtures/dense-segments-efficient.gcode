@@ -1,4 +1,4 @@
-; mode: dense_segments
+; mode: dense-segments
 ; rapid feedrate: 2000 mm/min
 ; raise/lower feedrate: 800 mm/min
 ; pen down z level: -0.5

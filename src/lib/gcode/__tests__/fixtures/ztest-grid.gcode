@@ -1,4 +1,4 @@
-; mode: ztest_grid
+; mode: ztest-grid
 ; rapid feedrate: 2000 mm/min
 ; raise/lower feedrate: 800 mm/min
 ; pen down z level: -0.5
