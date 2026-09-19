@@ -1,3 +1,10 @@
+## [1.18.1](https://github.com/federicovezzoli/gcode-tools/compare/v1.18.0...v1.18.1) (2026-09-19)
+
+
+### Bug Fixes
+
+* update surfacing parameters to include drawspeed ([85e766c](https://github.com/federicovezzoli/gcode-tools/commit/85e766c0237d22da7043017f2dd06659af6e2053))
+
 # [1.18.0](https://github.com/federicovezzoli/gcode-tools/compare/v1.17.0...v1.18.0) (2026-04-22)
 
 
