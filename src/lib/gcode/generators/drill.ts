@@ -11,6 +11,12 @@ function drill_point(x: number, y: number, zu: string, zd: string, rapid: number
   return out
 }
 
+// Safety cap on total hole count — mirrors the 5000-segment cap in surfacing.ts.
+// Without it, a small spacing on a large extent (e.g. 0.1 mm on a 100x100 mm
+// board = ~1,000,000 holes) would blow up both the generated G-code and the
+// SVG preview, which renders one circle per hole.
+const MAX_HOLES = 5000
+
 // generateDrillGrid: a rectangular grid of drill points spaced spacing_x/spacing_y
 // apart, centered within the X/Y extent, visited in serpentine order.
 export function generateDrillGrid(spacing_x: number, spacing_y: number, u: UniversalParams): string {
@@ -24,8 +30,19 @@ export function generateDrillGrid(spacing_x: number, spacing_y: number, u: Unive
     return out
   }
 
-  const num_x = Math.max(1, Math.floor(xsize / spacing_x) + 1)
-  const num_y = Math.max(1, Math.floor(ysize / spacing_y) + 1)
+  let num_x = Math.max(1, Math.floor(xsize / spacing_x) + 1)
+  let num_y = Math.max(1, Math.floor(ysize / spacing_y) + 1)
+
+  if (num_x * num_y > MAX_HOLES) {
+    // Shrink the larger axis first so the grid stays as square as the request allows.
+    while (num_x * num_y > MAX_HOLES && (num_x > 1 || num_y > 1)) {
+      if (num_x >= num_y && num_x > 1) num_x--
+      else if (num_y > 1) num_y--
+      else break
+    }
+    out += `; requested grid exceeds ${MAX_HOLES} holes — clamped to ${num_x}x${num_y}\n`
+  }
+
   const margin_x = (xsize - (num_x - 1) * spacing_x) / 2
   const margin_y = (ysize - (num_y - 1) * spacing_y) / 2
 

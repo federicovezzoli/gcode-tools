@@ -255,6 +255,13 @@ describe('drill grid', () => {
     expect(gcode).toContain('; invalid hole spacing')
     expect(gcode).not.toContain('G0 X')
   })
+
+  it('clamps runaway hole counts from tiny spacing on a large extent', () => {
+    const gcode = generateGcode('drill-grid', { ...BASE, xsize: 1000, ysize: 1000 }, { spacing_x: 0.1, spacing_y: 0.1 })
+    expect(gcode).toMatch(/; requested grid exceeds 5000 holes — clamped to \d+x\d+/)
+    const holes = gcode.match(/^G1 Z-0\.5 F800$/gm) ?? []
+    expect(holes.length).toBeLessThanOrEqual(5000)
+  })
 })
 
 describe('zero flag', () => {
