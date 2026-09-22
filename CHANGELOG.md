@@ -1,3 +1,10 @@
+## [1.18.2](https://github.com/federicovezzoli/gcode-tools/compare/v1.18.1...v1.18.2) (2026-09-22)
+
+
+### Bug Fixes
+
+* adjust pen_d parameter for surfacing mode ([36e3459](https://github.com/federicovezzoli/gcode-tools/commit/36e3459c1f3c0f157845c778e5a2ed7349fc72bd))
+
 ## [1.18.1](https://github.com/federicovezzoli/gcode-tools/compare/v1.18.0...v1.18.1) (2026-09-19)
 
 

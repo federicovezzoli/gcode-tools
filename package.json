@@ -1,6 +1,6 @@
 {
   "name": "gcode-tools",
-  "version": "1.18.1",
+  "version": "1.18.2",
   "private": false,
   "license": "MIT",
   "scripts": {
