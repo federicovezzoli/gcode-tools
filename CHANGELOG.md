@@ -1,3 +1,10 @@
+# [1.19.0](https://github.com/federicovezzoli/gcode-tools/compare/v1.18.2...v1.19.0) (2026-09-22)
+
+
+### Features
+
+* add CLAUDE.md for project guidance and documentation ([75cb4a8](https://github.com/federicovezzoli/gcode-tools/commit/75cb4a874a6266460d058b9662137141a6163306))
+
 ## [1.18.2](https://github.com/federicovezzoli/gcode-tools/compare/v1.18.1...v1.18.2) (2026-09-22)
 
 
