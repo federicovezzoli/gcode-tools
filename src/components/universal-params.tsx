@@ -96,6 +96,7 @@ export function UniversalParamsForm({ value, onChange, mode }: UniversalParamsFo
 
   const isSurfacing = mode === 'surfacing'
   const isHog = mode === 'hog'
+  const isDrill = mode === 'drill-grid'
 
   return (
     <Card>
@@ -130,14 +131,14 @@ export function UniversalParamsForm({ value, onChange, mode }: UniversalParamsFo
           <p className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wide">Z Levels</p>
           <div className="grid grid-cols-2 gap-3">
             <NumField
-              label={isSurfacing || isHog ? 'Cut Depth' : 'Pen Down'}
+              label={isDrill ? 'Hole Depth' : isSurfacing || isHog ? 'Cut Depth' : 'Pen Down'}
               name="pen_d"
               value={value.pen_d}
               unit="mm"
               onChange={set}
             />
             <NumField
-              label={isSurfacing || isHog ? 'Clearance' : 'Pen Up'}
+              label={isSurfacing || isHog || isDrill ? 'Clearance' : 'Pen Up'}
               name="pen_u"
               value={value.pen_u}
               unit="mm"
@@ -151,20 +152,22 @@ export function UniversalParamsForm({ value, onChange, mode }: UniversalParamsFo
           <div className="grid grid-cols-2 gap-3">
             <NumField label="Rapid" name="rapid" value={value.rapid} unit="mm/min" onChange={set} />
             <NumField
-              label={isSurfacing || isHog ? 'Plunge Rate' : 'Vertical'}
+              label={isSurfacing || isHog || isDrill ? 'Plunge Rate' : 'Vertical'}
               name="vertical"
               value={value.vertical}
               unit="mm/min"
               onChange={set}
             />
-            <NumField
-              label={isSurfacing || isHog ? 'Feedrate' : 'Draw'}
-              name="drawspeed"
-              value={value.drawspeed}
-              unit="mm/min"
-              onChange={set}
-            />
-            {!isSurfacing && (
+            {!isDrill && (
+              <NumField
+                label={isSurfacing || isHog ? 'Feedrate' : 'Draw'}
+                name="drawspeed"
+                value={value.drawspeed}
+                unit="mm/min"
+                onChange={set}
+              />
+            )}
+            {!isSurfacing && !isDrill && (
               <NumField
                 label={isHog ? 'Slotting Feedrate' : 'Draw (slow)'}
                 name="drawspeed_slow"

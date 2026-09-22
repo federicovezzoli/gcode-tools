@@ -324,6 +324,27 @@ export function ModeParamsForm({ mode, value, onChange, xsize = 100, ysize = 100
             </div>
           </>
         )}
+
+        {mode === 'drill-grid' && (
+          <div className="grid grid-cols-2 gap-3">
+            <NumField
+              label="Hole Spacing X"
+              name="spacing_x"
+              value={value.spacing_x ?? 50}
+              unit="mm"
+              min={0.1}
+              onChange={(k, v) => set(k, Math.max(0.1, v))}
+            />
+            <NumField
+              label="Hole Spacing Y"
+              name="spacing_y"
+              value={value.spacing_y ?? 50}
+              unit="mm"
+              min={0.1}
+              onChange={(k, v) => set(k, Math.max(0.1, v))}
+            />
+          </div>
+        )}
       </CardContent>
     </Card>
   )

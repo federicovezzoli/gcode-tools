@@ -7,13 +7,22 @@ export interface Segment {
   isRapid: boolean
 }
 
+// A point where the tool plunges straight down at a fixed XY (e.g. a drilled hole) —
+// pure Z moves have no XY extent, so they never show up as a Segment.
+export interface PlungePoint {
+  x: number
+  y: number
+}
+
 export interface ParsedToolpath {
   segments: Segment[]
+  points: PlungePoint[]
   bounds: { minX: number; maxX: number; minY: number; maxY: number }
 }
 
 export function parseGcode(gcode: string): ParsedToolpath {
   const segments: Segment[] = []
+  const points: PlungePoint[] = []
   let x = 0,
     y = 0,
     z = 0
@@ -35,9 +44,12 @@ export function parseGcode(gcode: string): ParsedToolpath {
     const ny = parse('Y') ?? y
     const nz = parse('Z') ?? z
 
-    // Only record segments that move in XY (skip pure Z lifts/plunges)
     if (nx !== x || ny !== y) {
+      // Moves in XY
       segments.push({ x1: x, y1: y, x2: nx, y2: ny, z: nz, isRapid: isG0 })
+    } else if (isG1 && nz < z) {
+      // Pure Z plunge at a fixed XY — mark it as a drill/plunge point
+      points.push({ x, y })
     }
 
     x = nx
@@ -45,14 +57,15 @@ export function parseGcode(gcode: string): ParsedToolpath {
     z = nz
   }
 
-  if (segments.length === 0) {
-    return { segments, bounds: { minX: 0, maxX: 100, minY: 0, maxY: 100 } }
+  if (segments.length === 0 && points.length === 0) {
+    return { segments, points, bounds: { minX: 0, maxX: 100, minY: 0, maxY: 100 } }
   }
 
-  const xs = segments.flatMap((s) => [s.x1, s.x2])
-  const ys = segments.flatMap((s) => [s.y1, s.y2])
+  const xs = [...segments.flatMap((s) => [s.x1, s.x2]), ...points.map((p) => p.x)]
+  const ys = [...segments.flatMap((s) => [s.y1, s.y2]), ...points.map((p) => p.y)]
   return {
     segments,
+    points,
     bounds: {
       minX: Math.min(...xs),
       maxX: Math.max(...xs),

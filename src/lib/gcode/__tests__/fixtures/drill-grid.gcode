@@ -1,0 +1,46 @@
+; mode: drill-grid
+; rapid feedrate: 2000 mm/min
+; raise/lower feedrate: 800 mm/min
+; hole depth z level: -0.5
+; clearance z height: 0.5
+; plunge feedrate: 800 mm/min
+; x extent: 100
+; y extent: 100
+; hole spacing x: 50 mm
+; hole spacing y: 50 mm
+G0 Z0.5 F800
+G0 X0.000 Y0.000 F2000
+G1 Z-0.5 F800
+G0 Z0.5 F800
+G0 Z0.5 F800
+G0 X50.000 Y0.000 F2000
+G1 Z-0.5 F800
+G0 Z0.5 F800
+G0 Z0.5 F800
+G0 X100.000 Y0.000 F2000
+G1 Z-0.5 F800
+G0 Z0.5 F800
+G0 Z0.5 F800
+G0 X100.000 Y50.000 F2000
+G1 Z-0.5 F800
+G0 Z0.5 F800
+G0 Z0.5 F800
+G0 X50.000 Y50.000 F2000
+G1 Z-0.5 F800
+G0 Z0.5 F800
+G0 Z0.5 F800
+G0 X0.000 Y50.000 F2000
+G1 Z-0.5 F800
+G0 Z0.5 F800
+G0 Z0.5 F800
+G0 X0.000 Y100.000 F2000
+G1 Z-0.5 F800
+G0 Z0.5 F800
+G0 Z0.5 F800
+G0 X50.000 Y100.000 F2000
+G1 Z-0.5 F800
+G0 Z0.5 F800
+G0 Z0.5 F800
+G0 X100.000 Y100.000 F2000
+G1 Z-0.5 F800
+G0 Z0.5 F800

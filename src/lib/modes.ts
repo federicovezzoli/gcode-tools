@@ -68,6 +68,12 @@ export const MODES: { value: Mode; label: string; group: string; description: st
     group: 'Milling',
     description: 'Progressive feedrate test to measure deflection and find the maximum cutting speed.',
   },
+  {
+    value: 'drill-grid',
+    label: 'Drill Grid',
+    group: 'Milling',
+    description: 'Grid of drilled holes for dowel pins, useful for squaring and fixturing stock to the spoilboard.',
+  },
 ]
 
 export const GROUP_COLORS: Record<string, string> = {

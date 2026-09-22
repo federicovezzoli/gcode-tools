@@ -11,6 +11,7 @@ export type Mode =
   | 'accel-y'
   | 'surfacing'
   | 'hog'
+  | 'drill-grid'
 
 export type Direction = 'N' | 'S' | 'E' | 'W'
 
@@ -82,6 +83,11 @@ export interface HogParams {
   final_stepover: number
 }
 
+export interface DrillGridParams {
+  spacing_x: number
+  spacing_y: number
+}
+
 export type ModeParams =
   | RulerParams
   | PerimParams
@@ -90,3 +96,4 @@ export type ModeParams =
   | AccelParams
   | SurfacingParams
   | HogParams
+  | DrillGridParams
