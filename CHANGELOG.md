@@ -1,3 +1,11 @@
+# [1.20.0](https://github.com/federicovezzoli/gcode-tools/compare/v1.19.0...v1.20.0) (2026-09-22)
+
+
+### Features
+
+* add drill-grid mode with parameters and G-code generation ([85d9fdd](https://github.com/federicovezzoli/gcode-tools/commit/85d9fddf7f27eb966c74b770be042d0bf3d72bb5))
+* implement drill-grid mode with parameter adjustments and G-code generation limits ([c6aa5cf](https://github.com/federicovezzoli/gcode-tools/commit/c6aa5cfbfabab373ddb3b159b049457fede28053))
+
 # [1.19.0](https://github.com/federicovezzoli/gcode-tools/compare/v1.18.2...v1.19.0) (2026-09-22)
 
 
