@@ -223,6 +223,40 @@ describe('hog', () => {
   })
 })
 
+describe('drill grid', () => {
+  it('even 3x3 grid (spacing divides extent exactly)', () =>
+    expect(generateGcode('drill-grid', BASE, { spacing_x: 50, spacing_y: 50 })).toBe(fixture('drill-grid')))
+
+  it('uneven spacing (centered with margin absorbing remainder)', () =>
+    expect(generateGcode('drill-grid', BASE, { spacing_x: 30, spacing_y: 20 })).toBe(fixture('drill-grid-uneven')))
+
+  it('every hole plunges to pen_d and retracts to pen_u', () => {
+    const gcode = generateGcode('drill-grid', BASE, { spacing_x: 30, spacing_y: 20 })
+    const plunges = gcode.match(/^G1 Z-0\.5 F800$/gm) ?? []
+    const retracts = gcode.match(/^G0 Z0\.5 F800$/gm) ?? []
+    expect(plunges.length).toBe(24) // 4 cols x 6 rows
+    expect(retracts.length).toBe(48) // each hole retracts before travel and after plunging
+  })
+
+  it('holes are spaced exactly by the requested pitch', () => {
+    const gcode = generateGcode('drill-grid', BASE, { spacing_x: 30, spacing_y: 20 })
+    const xs = [...new Set([...gcode.matchAll(/^G0 X([\d.]+) Y[\d.]+ F2000$/gm)].map((m) => parseFloat(m[1])))].sort(
+      (a, b) => a - b,
+    )
+    const ys = [...new Set([...gcode.matchAll(/^G0 X[\d.]+ Y([\d.]+) F2000$/gm)].map((m) => parseFloat(m[1])))].sort(
+      (a, b) => a - b,
+    )
+    for (let i = 1; i < xs.length; i++) expect(xs[i] - xs[i - 1]).toBeCloseTo(30, 3)
+    for (let i = 1; i < ys.length; i++) expect(ys[i] - ys[i - 1]).toBeCloseTo(20, 3)
+  })
+
+  it('invalid spacing emits a comment and no moves', () => {
+    const gcode = generateGcode('drill-grid', BASE, { spacing_x: 0, spacing_y: 50 })
+    expect(gcode).toContain('; invalid hole spacing')
+    expect(gcode).not.toContain('G0 X')
+  })
+})
+
 describe('zero flag', () => {
   it('bottom-left (default)', () =>
     expect(generateGcode('x', { ...BASE, zero: true, zero_ref: 'bottom-left' }, {})).toBe(fixture('x_zero')))

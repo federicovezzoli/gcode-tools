@@ -1,5 +1,6 @@
 import { generateAccel } from './generators/accel'
 import { generateDenseSegments } from './generators/dense'
+import { generateDrillGrid } from './generators/drill'
 import { generateHog } from './generators/hog'
 import { generateSquareness } from './generators/perimeter'
 import { generateRuler } from './generators/ruler'
@@ -19,17 +20,23 @@ export function generateGcode(mode: Mode, universal: UniversalParams, modeParams
   out += `; rapid feedrate: ${rapid} mm/min\n`
   out += `; raise/lower feedrate: ${vertical} mm/min\n`
 
-  if (mode !== 'hog') {
-    // all non-hog modes use the normal names and include xsize and ysize
+  if (mode === 'hog') {
+    out += `; z height of cut: ${pen_d}\n`
+    out += `; clearance z height: ${pen_u}\n`
+    out += `; cutting feedrate: ${drawspeed} mm/min\n`
+  } else if (mode === 'drill-grid') {
+    out += `; hole depth z level: ${pen_d}\n`
+    out += `; clearance z height: ${pen_u}\n`
+    out += `; plunge feedrate: ${vertical} mm/min\n`
+    out += `; x extent: ${xsize}\n`
+    out += `; y extent: ${ysize}\n`
+  } else {
+    // all other modes use the normal names and include xsize and ysize
     out += `; pen down z level: ${pen_d}\n`
     out += `; pen up z level: ${pen_u}\n`
     out += `; drawing feedrate: ${drawspeed} mm/min\n`
     out += `; x extent: ${xsize}\n`
     out += `; y extent: ${ysize}\n`
-  } else {
-    out += `; z height of cut: ${pen_d}\n`
-    out += `; clearance z height: ${pen_u}\n`
-    out += `; cutting feedrate: ${drawspeed} mm/min\n`
   }
 
   if (mode === 'ztest-corners' || mode === 'ztest-grid') {
@@ -68,6 +75,11 @@ export function generateGcode(mode: Mode, universal: UniversalParams, modeParams
     out += `; slotting feedrate: ${drawspeed_slow} mm/min\n`
     out += `; stepover: ${p.stepover ?? 1} mm\n`
     out += `; orientation: ${p.orientation}\n`
+  }
+
+  if (mode === 'drill-grid') {
+    out += `; hole spacing x: ${p.spacing_x} mm\n`
+    out += `; hole spacing y: ${p.spacing_y} mm\n`
   }
 
   if (zero) {
@@ -143,6 +155,10 @@ export function generateGcode(mode: Mode, universal: UniversalParams, modeParams
       p.stepover ?? 1,
       universal,
     )
+  }
+
+  if (mode === 'drill-grid') {
+    out += generateDrillGrid(p.spacing_x, p.spacing_y, universal)
   }
 
   return out

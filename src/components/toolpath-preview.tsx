@@ -50,9 +50,9 @@ export function ToolpathPreview({ gcode, mode, modeParams, universal }: Toolpath
     const m0 = gcode.indexOf('\nM0')
     return m0 !== -1 ? gcode.slice(0, m0) : gcode
   }, [gcode, passes])
-  const { segments, bounds } = useMemo(() => parseGcode(gcodeForPreview), [gcodeForPreview])
+  const { segments, points, bounds } = useMemo(() => parseGcode(gcodeForPreview), [gcodeForPreview])
 
-  if (!gcode || segments.length === 0) {
+  if (!gcode || (segments.length === 0 && points.length === 0)) {
     return (
       <div className="h-64 flex items-center justify-center rounded-md border border-dashed text-muted-foreground text-sm">
         Generate G-code to see a preview
@@ -223,6 +223,19 @@ export function ToolpathPreview({ gcode, mode, modeParams, universal }: Toolpath
               />
             ))}
 
+        {/* Drill holes — dot at each plunge point */}
+        {mode === 'drill-grid' &&
+          points.map((p) => (
+            <circle
+              key={`hole:${p.x},${p.y}`}
+              cx={tx(p.x)}
+              cy={ty(p.y)}
+              r="3.5"
+              className="fill-primary"
+              opacity={0.85}
+            />
+          ))}
+
         {/* G92 origin marker — only when G92 is enabled */}
         {universal?.zero &&
           (() => {
@@ -257,10 +270,17 @@ export function ToolpathPreview({ gcode, mode, modeParams, universal }: Toolpath
 
       {/* Stats */}
       <div className="flex gap-4 text-xs text-muted-foreground">
-        <span>
-          <span className="inline-block w-3 h-0.5 bg-primary rounded mr-1 translate-y-[-1px]" />
-          {cutCount} cut moves
-        </span>
+        {mode === 'drill-grid' ? (
+          <span>
+            <span className="inline-block w-2 h-2 bg-primary rounded-full mr-1" />
+            {points.length} holes
+          </span>
+        ) : (
+          <span>
+            <span className="inline-block w-3 h-0.5 bg-primary rounded mr-1 translate-y-[-1px]" />
+            {cutCount} cut moves
+          </span>
+        )}
         <span>
           <span className="inline-block w-3 h-0.5 bg-muted-foreground/30 rounded mr-1 translate-y-[-1px]" />
           {rapidCount} rapids

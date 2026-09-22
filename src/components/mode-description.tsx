@@ -194,6 +194,22 @@ const descriptions: Record<string, React.ReactNode> = {
       </div>
     </>
   ),
+
+  'drill-grid': (
+    <>
+      <p>
+        Drills a rectangular grid of holes across the spoilboard, evenly spaced and centered within the X and Y extent.
+        Drop dowel pins into the holes to square up stock against them, or use them as extra anchor points to hold
+        material down.
+      </p>
+      <p>
+        Each hole is a single straight plunge to the pen-down Z level and back up to clearance height — sized only by
+        whatever the bit cuts, with no pocketing or peck drilling. Set <strong>Hole Spacing X/Y</strong> to the exact
+        pitch you want between holes; as many holes as fit are placed at that spacing, with any leftover space split
+        evenly as margin on both sides so the grid is centered within the extent.
+      </p>
+    </>
+  ),
 }
 
 const MODE_TO_DESC: Record<Mode, keyof typeof descriptions> = {
@@ -209,6 +225,7 @@ const MODE_TO_DESC: Record<Mode, keyof typeof descriptions> = {
   'accel-y': 'accel',
   surfacing: 'surfacing',
   hog: 'hog',
+  'drill-grid': 'drill-grid',
 }
 
 const MODE_TITLES: Record<Mode, string> = {
@@ -224,6 +241,7 @@ const MODE_TITLES: Record<Mode, string> = {
   'accel-y': 'Acceleration Test',
   surfacing: 'Board Surfacing',
   hog: 'Hog-Out Optimization',
+  'drill-grid': 'Dowel Hole Grid',
 }
 
 interface ModeDescriptionProps {
