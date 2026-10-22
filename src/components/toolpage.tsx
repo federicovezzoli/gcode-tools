@@ -42,9 +42,10 @@ const DEFAULT_MODE_PARAMS: Record<string, Record<string, any>> = {
   'accel-x': { accel_low: 100, accel_high: 1000, accel_tests: 10 },
   'accel-y': { accel_low: 100, accel_high: 1000, accel_tests: 10 },
   surfacing: {
-    drawspeed: 1600,
+    rapid: 2500,
+    drawspeed: 2000,
     stepover: 27,
-    pass_axis: 'X',
+    pass_axis: 'Y',
     climb: true,
     perimeter: false,
     pen_d: -2,
