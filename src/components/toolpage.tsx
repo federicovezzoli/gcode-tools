@@ -26,7 +26,7 @@ const BASE_UNIVERSAL: UniversalParams = {
 }
 
 const MODE_FEEDRATE_DEFAULTS: Partial<Record<Mode, Partial<UniversalParams>>> = {
-  surfacing: { vertical: 300, drawspeed: 1000, pen_d: -1, pen_u: 10 },
+  surfacing: { vertical: 300, rapid: 2500, drawspeed: 2000, pen_d: -1, pen_u: 10 },
   'drill-grid': { vertical: 300, pen_d: -10, pen_u: 5 },
 }
 
@@ -42,8 +42,6 @@ const DEFAULT_MODE_PARAMS: Record<string, Record<string, any>> = {
   'accel-x': { accel_low: 100, accel_high: 1000, accel_tests: 10 },
   'accel-y': { accel_low: 100, accel_high: 1000, accel_tests: 10 },
   surfacing: {
-    rapid: 2500,
-    drawspeed: 2000,
     stepover: 27,
     pass_axis: 'Y',
     climb: true,
