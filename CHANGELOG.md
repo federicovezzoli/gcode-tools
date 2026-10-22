@@ -1,3 +1,10 @@
+## [1.20.2](https://github.com/federicovezzoli/gcode-tools/compare/v1.20.1...v1.20.2) (2026-10-22)
+
+
+### Bug Fixes
+
+* updated defaults for surfacing ([c76b8f1](https://github.com/federicovezzoli/gcode-tools/commit/c76b8f1880d71f32a2982ba218634b2cdbeb4ad5))
+
 ## [1.20.1](https://github.com/federicovezzoli/gcode-tools/compare/v1.20.0...v1.20.1) (2026-10-22)
 
 
