@@ -1,3 +1,10 @@
+## [1.20.3](https://github.com/federicovezzoli/gcode-tools/compare/v1.20.2...v1.20.3) (2026-10-22)
+
+
+### Bug Fixes
+
+* new depth for surfacing ([55b5b65](https://github.com/federicovezzoli/gcode-tools/commit/55b5b65ce8b3ba8f4842ba7c80e763c0d0f4abe6))
+
 ## [1.20.2](https://github.com/federicovezzoli/gcode-tools/compare/v1.20.1...v1.20.2) (2026-10-22)
 
 
